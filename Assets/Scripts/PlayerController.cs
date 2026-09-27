@@ -3,15 +3,16 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     [Header("Movement Settings")]
-    public float moveSpeed = 5f;
+    public float moveSpeed = 3f;
     public float jumpForce = 7f;
+    //For rotating the character while moving, 720 is degrees per second
+    public float rotationSpeed = 720f;
 
     [Header("Components")]
     private Rigidbody rb;
     private bool isGrounded = false;
 
-    [Header("Game Stats")]
-    private int score = 0;
+
 
     // Called when script instance is being loaded
     void Awake()
@@ -33,7 +34,7 @@ public class PlayerController : MonoBehaviour
     // Called before the first frame update
     void Start()
     {
-        Debug.Log("PlayerController Start - Game beginning with score: " + score);
+
     }
 
     // Called once per frame
@@ -51,10 +52,26 @@ public class PlayerController : MonoBehaviour
 
         // Create movement vector
         Vector3 movement = new Vector3(horizontal, 0f, vertical);
+
+        //With the help of google, this allows the player to rotate
+        if (movement != Vector3.zero) {
+            Quaternion playerRotation = Quaternion.LookRotation(movement);
+
+            //Quaternion is a 
+            transform.rotation = Quaternion.Slerp(
+                transform.rotation,
+                playerRotation,
+                rotationSpeed = Time.deltaTime
+
+                );
+        }
+
         movement = movement.normalized * moveSpeed * Time.deltaTime;
 
         // Apply movement
         transform.Translate(movement, Space.World);
+
+
     }
 
     void HandleJumping()
@@ -87,10 +104,5 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    // Public method to add score
-    public void AddScore(int points)
-    {
-        score += points;
-        Debug.Log("SCORE UPDATED: " + score);
-    }
+
 }
