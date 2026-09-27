@@ -7,11 +7,18 @@ public class PlayerController : MonoBehaviour
     public float jumpForce = 7f;
     //For rotating the character while moving, 720 is degrees per second
     public float rotationSpeed = 720f;
+   // This allows time between jumps so player is not rapidly jumping
+    [SerializeField] private float jumpRepeatTime = 1f;
+
 
     [Header("Components")]
     private Rigidbody rb;
     private bool isGrounded = false;
+ 
 
+    //Reference to the Animator Component
+    private Animator animator;
+    //private CharacterController controller;
 
 
     // Called when script instance is being loaded
@@ -34,7 +41,10 @@ public class PlayerController : MonoBehaviour
     // Called before the first frame update
     void Start()
     {
-
+        // Get reference to the Animator and CharacterController components
+        //This was all learned from Faktory Studios on YouTube
+        animator = GetComponent<Animator>();
+        //controller = GetComponent<CharacterController>();
     }
 
     // Called once per frame
@@ -53,11 +63,18 @@ public class PlayerController : MonoBehaviour
         // Create movement vector
         Vector3 movement = new Vector3(horizontal, 0f, vertical);
 
+        // This will determine IF the player is moving, editing from previous if statement
+        bool isMoving = movement != Vector3.zero;
+
+        animator.SetBool("isRunning", isMoving);
+
         //With the help of google, this allows the player to rotate
-        if (movement != Vector3.zero) {
+        if (isMoving) {
             Quaternion playerRotation = Quaternion.LookRotation(movement);
 
-            //Quaternion is a 
+            
+
+            //Quaternion is how Unity represents a 3d objects rotation
             transform.rotation = Quaternion.Slerp(
                 transform.rotation,
                 playerRotation,
@@ -79,7 +96,10 @@ public class PlayerController : MonoBehaviour
         // Check for jump input
         if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
         {
+            isGrounded = false;
+
             rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+            animator.SetTrigger("Jump");
             Debug.Log("Player jumped!");
         }
     }
