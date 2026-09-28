@@ -96,6 +96,7 @@ public class PlayerController : MonoBehaviour
         // Check for jump input
         if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
         {
+            //
             isGrounded = false;
 
             rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
