@@ -1,4 +1,6 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.Windows;
 
 public class PlayerController : MonoBehaviour
 {
@@ -14,7 +16,7 @@ public class PlayerController : MonoBehaviour
     [Header("Components")]
     private Rigidbody rb;
     private bool isGrounded = false;
- 
+    private Vector3 input;
 
     //Reference to the Animator Component
     private Animator animator;
@@ -50,11 +52,11 @@ public class PlayerController : MonoBehaviour
     // Called once per frame
     void Update()
     {
-        HandleMovement();
-        HandleJumping();
+       // HandleMovement();
+       // HandleJumping();
     }
 
-    void HandleMovement()
+    /*void HandleMovement()
     {
         // Get input from keyboard, maybe switch to mouse later on? 
         float horizontal = Input.GetAxis("Horizontal"); // A/D or Left/Right arrows
@@ -99,7 +101,7 @@ public class PlayerController : MonoBehaviour
             animator.SetTrigger("Jump");
             Debug.Log("Player jumped!");
         }
-    }
+    }*/
 
     // Called when this collider/rigidbody has begun touching another
     void OnCollisionEnter(Collision collision)
@@ -119,6 +121,27 @@ public class PlayerController : MonoBehaviour
             isGrounded = false;
             Debug.Log("Player left ground");
         }
+    }
+
+
+
+
+    void testMovement() {
+
+       
+
+        input = Vector3.zero;
+
+        Keyboard kb = Keyboard.current;
+        // move forward
+        if (kb.wKey.isPressed || kb.upArrowKey.isPressed)
+        {
+
+            input.y = +1;
+            animator.SetBool("isRunning", isMoving);
+        }
+
+
     }
 
 
