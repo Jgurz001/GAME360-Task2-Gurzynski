@@ -799,7 +799,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveSpeed: 3
   jumpForce: 7
-  rotationSpeed: 720
+  rotationSpeed: 1500
   jumpRepeatTime: 1
 --- !u!4 &1961852788 stripped
 Transform:

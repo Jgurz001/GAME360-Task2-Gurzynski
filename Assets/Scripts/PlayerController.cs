@@ -6,7 +6,7 @@ public class PlayerController : MonoBehaviour
     public float moveSpeed = 3f;
     public float jumpForce = 7f;
     //For rotating the character while moving, 720 is degrees per second
-    public float rotationSpeed = 720f;
+    public float rotationSpeed = 1440f;
    // This allows time between jumps so player is not rapidly jumping
     [SerializeField] private float jumpRepeatTime = 1f;
 
@@ -56,7 +56,7 @@ public class PlayerController : MonoBehaviour
 
     void HandleMovement()
     {
-        // Get input from keyboard
+        // Get input from keyboard, maybe switch to mouse later on? 
         float horizontal = Input.GetAxis("Horizontal"); // A/D or Left/Right arrows
         float vertical = Input.GetAxis("Vertical");     // W/S or Up/Down arrows
 
@@ -66,21 +66,17 @@ public class PlayerController : MonoBehaviour
         // This will determine IF the player is moving, editing from previous if statement
         bool isMoving = movement != Vector3.zero;
 
+        // Call on the animation
         animator.SetBool("isRunning", isMoving);
 
         //With the help of google, this allows the player to rotate
         if (isMoving) {
+
+
             Quaternion playerRotation = Quaternion.LookRotation(movement);
 
-            
-
             //Quaternion is how Unity represents a 3d objects rotation
-            transform.rotation = Quaternion.Slerp(
-                transform.rotation,
-                playerRotation,
-                rotationSpeed = Time.deltaTime
-
-                );
+            transform.rotation = Quaternion.Slerp(transform.rotation,playerRotation,rotationSpeed = Time.deltaTime);
         }
 
         movement = movement.normalized * moveSpeed * Time.deltaTime;
