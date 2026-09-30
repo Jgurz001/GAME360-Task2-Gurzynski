@@ -1,6 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.Windows;
+//using UnityEngine.Windows;
 
 public class PlayerController : MonoBehaviour
 {
@@ -12,11 +12,14 @@ public class PlayerController : MonoBehaviour
    // This allows time between jumps so player is not rapidly jumping
     [SerializeField] private float jumpRepeatTime = 1f;
 
+    [SerializeField] float health, maxHealth = 3f;
+
+    [SerializeField] FloatingHealthBar healthBar;
 
     [Header("Components")]
     private Rigidbody rb;
     private bool isGrounded = false;
-    private Vector3 input;
+    //private Vector3 input;
 
     //Reference to the Animator Component
     private Animator animator;
@@ -43,6 +46,13 @@ public class PlayerController : MonoBehaviour
     // Called before the first frame update
     void Start()
     {
+
+        health = maxHealth;
+        healthBar.UpdateHealthBar(health, maxHealth);
+        healthBar = GetComponentInChildren<FloatingHealthBar>();
+
+
+
         // Get reference to the Animator and CharacterController components
         //This was all learned from Faktory Studios on YouTube
         animator = GetComponent<Animator>();
@@ -52,15 +62,15 @@ public class PlayerController : MonoBehaviour
     // Called once per frame
     void Update()
     {
-       // HandleMovement();
-       // HandleJumping();
+        HandleMovement();
+        HandleJumping();
     }
 
-    /*void HandleMovement()
+    void HandleMovement()
     {
         // Get input from keyboard, maybe switch to mouse later on? 
-        float horizontal = Input.GetAxis("Horizontal"); // A/D or Left/Right arrows
-        float vertical = Input.GetAxis("Vertical");     // W/S or Up/Down arrows
+        float horizontal = Input.GetAxisRaw("Horizontal"); // A/D or Left/Right arrows
+        float vertical = Input.GetAxisRaw("Vertical");     // W/S or Up/Down arrows
 
         // Create movement vector
         Vector3 movement = new Vector3(horizontal, 0f, vertical);
@@ -101,7 +111,7 @@ public class PlayerController : MonoBehaviour
             animator.SetTrigger("Jump");
             Debug.Log("Player jumped!");
         }
-    }*/
+    }
 
     // Called when this collider/rigidbody has begun touching another
     void OnCollisionEnter(Collision collision)
@@ -124,15 +134,36 @@ public class PlayerController : MonoBehaviour
     }
 
 
+    public void TakeDamage(float damageAmount) {
+
+        health -= damageAmount;
+        healthBar.UpdateHealthBar(health, maxHealth);
+        if (health <= 0) 
+        {
+            Destroy(gameObject);        
+        }
+
+    }
 
 
-    void testMovement() {
 
-       
+    // Try a switch case with GetAxisRaw: BUT FOCUS MORE ON THE OTHER CONCEPTS BEFORE WORKING ON THE ANIMATION
+
+    /*void testMovement() {
+
+        // Get input from keyboard, maybe switch to mouse later on? 
+        float horizontal = Input.GetAxis("Horizontal"); // A/D or Left/Right arrows
+        float vertical = Input.GetAxis("Vertical");     // W/S or Up/Down arrows
+
+        // Create movement vector
+        Vector3 movement = new Vector3(horizontal, 0f, vertical);
+        // This will determine IF the player is moving, editing from previous if statement
+        bool isMoving = movement != Vector3.zero;
 
         input = Vector3.zero;
 
         Keyboard kb = Keyboard.current;
+
         // move forward
         if (kb.wKey.isPressed || kb.upArrowKey.isPressed)
         {
@@ -142,7 +173,7 @@ public class PlayerController : MonoBehaviour
         }
 
 
-    }
+    }*/
 
 
 }
