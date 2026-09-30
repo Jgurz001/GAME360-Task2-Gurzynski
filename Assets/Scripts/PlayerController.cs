@@ -48,9 +48,9 @@ public class PlayerController : MonoBehaviour
     {
 
         health = maxHealth;
-        healthBar.UpdateHealthBar(health, maxHealth);
+       
         healthBar = GetComponentInChildren<FloatingHealthBar>();
-
+        healthBar.UpdateHealthBar(health, maxHealth);
 
 
         // Get reference to the Animator and CharacterController components
@@ -88,7 +88,7 @@ public class PlayerController : MonoBehaviour
             Quaternion playerRotation = Quaternion.LookRotation(movement);
 
             //Quaternion is how Unity represents a 3d objects rotation
-            transform.rotation = Quaternion.Slerp(transform.rotation,playerRotation,rotationSpeed = Time.deltaTime);
+            transform.rotation = Quaternion.Slerp(transform.rotation,playerRotation,rotationSpeed = Time.fixedDeltaTime);
         }
 
         movement = movement.normalized * moveSpeed * Time.deltaTime;

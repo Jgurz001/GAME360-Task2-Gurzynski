@@ -6,20 +6,144 @@ public class Enemy : MonoBehaviour
     [Header("Enemy Stats")]
 
     //Number of hits the enemy can take
-    public int health = 1;
+    [SerializeField] float health, maxHealth = 3f;
 
-    //Normal enemy movement
+    //Normal enemy movement speed
+    public float moveSpeed = 2f;
 
+    //How quickly the enemy turns toard the player
+    public float rotateSpeed = 360f;
+
+    [SerializeField] FloatingHealthBar healthBar;
+
+    [Header("AI")]
+
+    //Enemy begins chasing when the player enters this range
+    public float detectionRange = 5f;
+
+    //Ref to the player's transform
+    private Transform player;
+
+    //Reference to the enemy's 3D RigidBoy
+    private Rigidbody rb;
+
+    private void Awake()
+    {
+        //Get the Rgidbody attached to the enemy
+        rb = GetComponent<Rigidbody>();
+    }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        //Find the gameobject tagged player
+        GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
+
+        //Store the player's transform if one was found
+        if (playerObject != null)
+        {
+            player = playerObject.transform;
+
+        }
+        else 
+        {
+            Debug.LogError("Enemy could not find an object tagged player!");
+
+        }
         
     }
 
-    // Update is called once per frame
-    void Update()
+    // FixedUpdate used for rigidbody physics
+    void FixedUpdate()
     {
+        ChasePlayer();
+    }
+
+    private void ChasePlayer() 
+    {
+        //Stop if player or rigidbody cannot be found
+        if (player == null || rb == null) 
+        {
+            return;
         
+        }
+
+        // Start with the enemy's normal movement speed
+        float currentSpeed = moveSpeed;
+
+        //Increase enemy speed as the player's score increases, will be written later
+
+
+        //Calculate the 3D distance between the enemy and player
+        float distance = Vector3.Distance(transform.position, player.position);
+
+        //Preserve the enemy's current vertical velocity
+        //this allows gravity to continue working
+        float verticalVelocity = rb.linearVelocity.y;
+
+        if (distance <= detectionRange)
+        {
+            //Find the direction from the enemy to the player
+            Vector3 direction = player.position - transform.position;
+
+            //prevent the enemy from flying upward when the player jumps
+            direction.y = 0f;
+
+            //Continue only if there is a valid direction
+            if (direction.sqrMagnitude > 0.001f)
+            {
+                direction.Normalize();
+
+                // Move toward the player on the z and z axes
+                rb.linearVelocity = new Vector3(direction.x * currentSpeed, verticalVelocity, direction.z * currentSpeed);
+
+                // Determine the rotation needed to face the player
+                Quaternion targetRotation = Quaternion.LookRotation(direction, Vector3.up);
+
+                //Smoothly rotate toward the player
+                Quaternion newRotation = Quaternion.RotateTowards(rb.rotation, targetRotation, rotateSpeed * Time.fixedDeltaTime);
+
+                rb.MoveRotation(newRotation);
+            }
+        }
+        else 
+        {
+            // Stop horizontal movement when outside detection range, but preserve gravity and vertical movement
+            rb.linearVelocity = new Vector3(0f, verticalVelocity, 0f);
+        }
+      
+    
+    }
+
+    public void TakeDamage(float damageAmount)
+    {
+
+        health -= damageAmount;
+        healthBar.UpdateHealthBar(health, maxHealth);
+        if (health <= 0)
+        {
+            Die();
+        }
+
+    }
+
+    private void Die() 
+    {
+
+        //Notify the GameManager Singleton that an enemy died, will work on when we get to that point
+        if (GameManager.Instance != null) 
+        {
+            
+        }
+        Destroy(gameObject);
+    }
+
+    // I am assuming this is for testing
+    private void OnDrawGizmosSelected()
+    {
+        // Display the enemy's 3D detection range in the scene view
+
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, detectionRange);
     }
 }

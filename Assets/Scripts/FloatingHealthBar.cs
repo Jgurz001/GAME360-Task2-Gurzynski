@@ -1,5 +1,5 @@
 using UnityEngine;
-using UnityEngine.Rendering;
+
 using UnityEngine.UI;
 public class FloatingHealthBar : MonoBehaviour
 {
@@ -12,9 +12,5 @@ public class FloatingHealthBar : MonoBehaviour
     
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+
 }
