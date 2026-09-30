@@ -9,12 +9,22 @@ public class PlayerController : MonoBehaviour
     public float jumpForce = 7f;
     //For rotating the character while moving, 720 is degrees per second
     public float rotationSpeed = 1440f;
+
+
+
    // This allows time between jumps so player is not rapidly jumping
     [SerializeField] private float jumpRepeatTime = 1f;
 
     [SerializeField] float health, maxHealth = 3f;
 
     [SerializeField] FloatingHealthBar healthBar;
+
+
+
+    [Header("Mouse Controls")]
+
+
+
 
     [Header("Components")]
     private Rigidbody rb;
@@ -62,6 +72,8 @@ public class PlayerController : MonoBehaviour
     // Called once per frame
     void Update()
     {
+       
+
         HandleMovement();
         HandleJumping();
     }
