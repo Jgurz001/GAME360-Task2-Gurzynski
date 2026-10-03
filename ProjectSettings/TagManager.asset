@@ -6,11 +6,12 @@ TagManager:
   tags:
   - CinemachineTarget
   - Ground
+  - Enemy
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Enemy
   - Water
   - UI
   - 

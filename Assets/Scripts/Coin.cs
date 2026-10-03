@@ -1,8 +1,9 @@
+using System;
 using UnityEngine;
 
 public class Coin : MonoBehaviour
 {
-
+    public static event Action<int> OnCoinCollected;
     [Header("Coin Settings")]
     public int scoreValue = 10;
     public float rotationSpeed = 50f;
@@ -35,6 +36,7 @@ public class Coin : MonoBehaviour
             {
                 // Add score to player
                 //player.AddScore(scoreValue);
+                OnCoinCollected?.Invoke(scoreValue);
 
                 // Log collection
                 Debug.Log("COLLECTED: " + gameObject.name + " for " + scoreValue + " points!");
