@@ -36,6 +36,10 @@ public class Enemy : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        health = maxHealth;
+        if (healthBar != null) {
+            healthBar.UpdateHealthBar(health, maxHealth);
+        }
         //Find the gameobject tagged player
         GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
 
@@ -117,13 +121,17 @@ public class Enemy : MonoBehaviour
 
     public void TakeDamage(float damageAmount)
     {
-        damageAmount = 50;
+        
         health -= damageAmount;
+
+        Debug.Log($"Enemy took {damageAmount} damage!!! Current health: {health}");
         healthBar.UpdateHealthBar(health, maxHealth);
         if (health <= 0)
         {
             Die();
         }
+        
+
 
     }
 

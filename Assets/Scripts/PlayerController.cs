@@ -10,8 +10,14 @@ public class PlayerController : MonoBehaviour
     //For rotating the character while moving, 720 is degrees per second
     public float rotationSpeed = 1440f;
 
+    [Header("Attack Settings")]
+    [SerializeField] private int attackDamage = 25;
+    [SerializeField] private float attackRange = 1.5f;
 
+    //Create empty child object
+    [SerializeField] Transform attackPoint;
 
+    [SerializeField] LayerMask enemyLayers;
    // This allows time between jumps so player is not rapidly jumping
     [SerializeField] private float jumpRepeatTime = 1f;
 
@@ -76,6 +82,7 @@ public class PlayerController : MonoBehaviour
 
         HandleMovement();
         HandleJumping();
+        Attack();
     }
 
     void HandleMovement()
@@ -145,6 +152,42 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    void Attack()
+    {
+
+        if (Mouse.current == null || !Mouse.current.leftButton.wasPressedThisFrame) {
+            return;
+        }
+        Debug.Log("Attack pressed");
+
+        if (attackPoint == null) {
+            Debug.Log("Attack Point not assigned");
+            return;
+        }
+
+        // This will find enemy colliders inside of the attack sphere
+        Collider[] hitEnemies = Physics.OverlapSphere(attackPoint.position, attackRange, enemyLayers, QueryTriggerInteraction.Collide);
+        foreach (Collider enemyCollider in hitEnemies) {
+
+
+            Enemy enemyHealth = enemyCollider.GetComponent<Enemy>();
+            if (enemyHealth != null) {
+
+                enemyHealth.TakeDamage(attackDamage);
+            }
+
+        }
+
+
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        if (attackPoint == null) return;
+
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(attackPoint.position, attackRange);
+    }
 
     public void TakeDamage(float damageAmount) {
 
