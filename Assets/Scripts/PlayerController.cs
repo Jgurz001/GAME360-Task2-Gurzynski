@@ -152,11 +152,21 @@ public class PlayerController : MonoBehaviour
         healthBar.UpdateHealthBar(health, maxHealth);
         if (health <= 0) 
         {
-            Destroy(gameObject);        
+            Die();        
         }
 
     }
 
+    private void Die()
+    {
+
+        //Notify the GameManager Singleton that an enemy died, will work on when we get to that point
+        if (GameManager.Instance != null)
+        {
+
+        }
+        Destroy(gameObject);
+    }
 
 
     // Try a switch case with GetAxisRaw: BUT FOCUS MORE ON THE OTHER CONCEPTS BEFORE WORKING ON THE ANIMATION

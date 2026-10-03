@@ -117,7 +117,7 @@ public class Enemy : MonoBehaviour
 
     public void TakeDamage(float damageAmount)
     {
-
+        damageAmount = 50;
         health -= damageAmount;
         healthBar.UpdateHealthBar(health, maxHealth);
         if (health <= 0)
@@ -127,6 +127,13 @@ public class Enemy : MonoBehaviour
 
     }
 
+    public void Attack(float damagePoints) {
+        damagePoints = 50;
+
+    
+    }
+
+    //Death method that kills off the enemy, same will be applied in the player
     private void Die() 
     {
 
@@ -138,7 +145,7 @@ public class Enemy : MonoBehaviour
         Destroy(gameObject);
     }
 
-    // I am assuming this is for testing
+    // This is the method that displays the enemies detection range, this is purely for visual testing
     private void OnDrawGizmosSelected()
     {
         // Display the enemy's 3D detection range in the scene view
