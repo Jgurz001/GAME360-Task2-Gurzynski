@@ -14,6 +14,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private int attackDamage = 25;
     [SerializeField] private float attackRange = 1.5f;
 
+    [SerializeField] private GameOver gameOver;
+
     //Create empty child object
     [SerializeField] Transform attackPoint;
 
@@ -204,11 +206,11 @@ public class PlayerController : MonoBehaviour
     {
 
         //Notify the GameManager Singleton that an enemy died, will work on when we get to that point
-        if (GameManager.Instance != null)
+        if (gameOver != null)
         {
-
+            gameOver.postGameOver();
         }
-        Destroy(gameObject);
+        
     }
 
 

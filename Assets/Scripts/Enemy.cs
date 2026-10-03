@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Rigidbody))]
 public class Enemy : MonoBehaviour
@@ -13,6 +14,13 @@ public class Enemy : MonoBehaviour
 
     //How quickly the enemy turns toard the player
     public float rotateSpeed = 360f;
+
+    [Header("Attack Settings")]
+    [SerializeField] private int attackDamage = 10;
+    [SerializeField] private float attackRange = 1.5f;
+    //Enemy needs a cool down because spamming would cause issues
+    [SerializeField] private float attackCooldown = 1f;
+    private float attackTime;
 
     [SerializeField] FloatingHealthBar healthBar;
 
@@ -135,10 +143,35 @@ public class Enemy : MonoBehaviour
 
     }
 
-    public void Attack(float damagePoints) {
-        damagePoints = 50;
+    void Attack(PlayerController playerHealth)
+    {
+        //Damage player
+        playerHealth.TakeDamage(attackDamage);
 
-    
+        Debug.Log($"Enemy attacked player for  {attackDamage} damage!");
+        
+
+
+    }
+
+    private void OnCollisionStay(Collision collision)
+    {
+        if (Time.time < attackTime) 
+        {
+            return;
+        
+        }
+
+        //Search the collided object and its parents
+        PlayerController playerHealth = collision.gameObject.GetComponentInParent<PlayerController>();
+
+        if (playerHealth != null) 
+        {
+            Attack(playerHealth);
+
+            //cooldown
+            attackTime = Time.time + attackCooldown;
+        }
     }
 
     //Death method that kills off the enemy, same will be applied in the player
