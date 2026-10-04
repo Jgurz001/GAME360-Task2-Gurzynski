@@ -31,6 +31,16 @@ public class ScoreManager : MonoBehaviour
         score += amount;
         OnScoreChanged?.Invoke(score);
     }
+
+    // lol forgot this
+    public void resetScore() 
+    {
+        score = 0;
+        OnScoreChanged?.Invoke(score);
+
+        Debug.Log("Score has been RESET to 0");
+    
+    }
     void Start()
     {
     }

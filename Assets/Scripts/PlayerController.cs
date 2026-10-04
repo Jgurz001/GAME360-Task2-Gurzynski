@@ -19,7 +19,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private int attackDamage = 25;
     [SerializeField] private float attackRange = 1.5f;
 
-    [SerializeField] private GameOver gameOver;
+    [SerializeField] private GameUI gameUI;
 
     //Create empty child object
     [SerializeField] Transform attackPoint;
@@ -231,11 +231,12 @@ public class PlayerController : MonoBehaviour
 
     }
 
+
     private void Die()
     {
-        if (gameOver != null)
+        if (gameUI != null)
         {
-            gameOver.postGameOver();
+            gameUI.postGameOver();
         }
         
     }
