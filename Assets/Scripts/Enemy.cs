@@ -1,5 +1,5 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
+
 
 [RequireComponent(typeof(Rigidbody))]
 public class Enemy : MonoBehaviour
@@ -35,10 +35,23 @@ public class Enemy : MonoBehaviour
     //Reference to the enemy's 3D RigidBoy
     private Rigidbody rb;
 
+    //Reference to the Animator Component
+    private Animator animator;
+
     private void Awake()
     {
         //Get the Rgidbody attached to the enemy
         rb = GetComponent<Rigidbody>();
+
+        //Component here in the event Animator is located on the model
+        animator = GetComponentInChildren<Animator>();
+
+        if (animator == null) 
+        {
+            Debug.Log("Enemy could not find the Animator");
+        
+        
+        }
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -50,6 +63,7 @@ public class Enemy : MonoBehaviour
         }
         //Find the gameobject tagged player
         GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
+ 
 
         //Store the player's transform if one was found
         if (playerObject != null)
@@ -93,6 +107,12 @@ public class Enemy : MonoBehaviour
         //this allows gravity to continue working
         float verticalVelocity = rb.linearVelocity.y;
 
+        // The enemy begins each physics frame considered stationary
+        bool isMoving = false;
+       
+
+   
+
         if (distance <= detectionRange)
         {
             //Find the direction from the enemy to the player
@@ -105,6 +125,9 @@ public class Enemy : MonoBehaviour
             if (direction.sqrMagnitude > 0.001f)
             {
                 direction.Normalize();
+
+                // Enemy is actively moving (Spent an hour realizing I was missing this)
+                isMoving = true;
 
                 // Move toward the player on the z and z axes
                 rb.linearVelocity = new Vector3(direction.x * currentSpeed, verticalVelocity, direction.z * currentSpeed);
@@ -122,6 +145,13 @@ public class Enemy : MonoBehaviour
         {
             // Stop horizontal movement when outside detection range, but preserve gravity and vertical movement
             rb.linearVelocity = new Vector3(0f, verticalVelocity, 0f);
+        }
+
+        if (animator != null)
+        {
+            animator.SetBool("isRunning", isMoving);
+        
+        
         }
       
     

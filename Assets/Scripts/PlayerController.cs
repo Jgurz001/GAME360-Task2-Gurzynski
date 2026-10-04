@@ -69,7 +69,7 @@ public class PlayerController : MonoBehaviour
         healthBar.UpdateHealthBar(health, maxHealth);
 
 
-        // Get reference to the Animator and CharacterController components
+        // Get reference to the Animator components
         //This was all learned from Faktory Studios on YouTube
         animator = GetComponent<Animator>();
         
@@ -185,8 +185,10 @@ public class PlayerController : MonoBehaviour
     {
 
         if (Mouse.current == null || !Mouse.current.leftButton.wasPressedThisFrame) {
+            
             return;
         }
+        
         Debug.Log("Attack pressed");
 
         if (attackPoint == null) {
