@@ -1,12 +1,17 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
-//using UnityEngine.Windows;
+
 
 public class PlayerController : MonoBehaviour
 {
     [Header("Movement Settings")]
     public float moveSpeed = 3f;
     public float jumpForce = 7f;
+    
+    private Vector3 moveDirection;
+    
+    [SerializeField] private Transform cameraTransform;
+
     //For rotating the character while moving, 720 is degrees per second
     public float rotationSpeed = 1440f;
 
@@ -20,28 +25,21 @@ public class PlayerController : MonoBehaviour
     [SerializeField] Transform attackPoint;
 
     [SerializeField] LayerMask enemyLayers;
-   // This allows time between jumps so player is not rapidly jumping
-    [SerializeField] private float jumpRepeatTime = 1f;
+
 
     [SerializeField] float health, maxHealth = 3f;
 
     [SerializeField] FloatingHealthBar healthBar;
 
 
-
-    [Header("Mouse Controls")]
-
-
-
-
     [Header("Components")]
     private Rigidbody rb;
     private bool isGrounded = false;
-    //private Vector3 input;
+   
 
     //Reference to the Animator Component
     private Animator animator;
-    //private CharacterController controller;
+   
 
 
     // Called when script instance is being loaded
@@ -74,7 +72,14 @@ public class PlayerController : MonoBehaviour
         // Get reference to the Animator and CharacterController components
         //This was all learned from Faktory Studios on YouTube
         animator = GetComponent<Animator>();
-        //controller = GetComponent<CharacterController>();
+        
+
+        if (cameraTransform == null && Camera.main != null)
+        {
+            cameraTransform = Camera.main.transform;
+        
+        }
+
     }
 
     // Called once per frame
@@ -87,35 +92,57 @@ public class PlayerController : MonoBehaviour
         Attack();
     }
 
+
+
     void HandleMovement()
     {
         // Get input from keyboard, maybe switch to mouse later on? 
         float horizontal = Input.GetAxisRaw("Horizontal"); // A/D or Left/Right arrows
         float vertical = Input.GetAxisRaw("Vertical");     // W/S or Up/Down arrows
 
-        // Create movement vector
-        Vector3 movement = new Vector3(horizontal, 0f, vertical);
-
-        // This will determine IF the player is moving, editing from previous if statement
-        bool isMoving = movement != Vector3.zero;
-
-        // Call on the animation
-        animator.SetBool("isRunning", isMoving);
-
-        //With the help of google, this allows the player to rotate
-        if (isMoving) {
-
-
-            Quaternion playerRotation = Quaternion.LookRotation(movement);
-
-            //Quaternion is how Unity represents a 3d objects rotation
-            transform.rotation = Quaternion.Slerp(transform.rotation,playerRotation,rotationSpeed = Time.fixedDeltaTime);
+        if (cameraTransform == null) 
+        {
+            return;
+        
+        
         }
 
-        movement = movement.normalized * moveSpeed * Time.deltaTime;
 
-        // Apply movement
-        transform.Translate(movement, Space.World);
+        //Get the camera's forward and right directions
+        Vector3 cameraForward = cameraTransform.forward;
+        Vector3 cameraRight = cameraTransform.right;
+
+        //Remove vertical tilt this way the player stays of the ground
+        cameraForward.y = 0f;
+        cameraRight.y = 0f;
+
+        cameraForward.Normalize();
+        cameraRight.Normalize();
+
+        // Create movement relative to the camera
+        moveDirection = (cameraForward * vertical + cameraRight * horizontal).normalized;
+
+        bool isMoving = moveDirection.sqrMagnitude > 0.01f;
+
+
+        // Play or stop the running animatiopn
+        animator.SetBool("isRunning", isMoving);
+
+        if (isMoving) 
+        {
+
+            // Find the rotation that faces the movement direction
+            Quaternion targetRotation = Quaternion.LookRotation(moveDirection);
+
+            //Gradually rotate the player
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+          
+        }
+
+        // Keep the Rigidbody's current vertical speed for jump
+        Vector3 velocity = rb.linearVelocity;
+        //Apply camera-relative horizontal movement
+        rb.linearVelocity = new Vector3(moveDirection.x * moveSpeed, velocity.y, moveDirection.z * moveSpeed);
 
 
     }
@@ -204,8 +231,6 @@ public class PlayerController : MonoBehaviour
 
     private void Die()
     {
-
-        //Notify the GameManager Singleton that an enemy died, will work on when we get to that point
         if (gameOver != null)
         {
             gameOver.postGameOver();
@@ -214,33 +239,7 @@ public class PlayerController : MonoBehaviour
     }
 
 
-    // Try a switch case with GetAxisRaw: BUT FOCUS MORE ON THE OTHER CONCEPTS BEFORE WORKING ON THE ANIMATION
 
-    /*void testMovement() {
-
-        // Get input from keyboard, maybe switch to mouse later on? 
-        float horizontal = Input.GetAxis("Horizontal"); // A/D or Left/Right arrows
-        float vertical = Input.GetAxis("Vertical");     // W/S or Up/Down arrows
-
-        // Create movement vector
-        Vector3 movement = new Vector3(horizontal, 0f, vertical);
-        // This will determine IF the player is moving, editing from previous if statement
-        bool isMoving = movement != Vector3.zero;
-
-        input = Vector3.zero;
-
-        Keyboard kb = Keyboard.current;
-
-        // move forward
-        if (kb.wKey.isPressed || kb.upArrowKey.isPressed)
-        {
-
-            input.y = +1;
-            animator.SetBool("isRunning", isMoving);
-        }
-
-
-    }*/
 
 
 }
