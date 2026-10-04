@@ -16,6 +16,9 @@ public class GameUI : MonoBehaviour
 
     [Header("Main Menu Settings")]
     [SerializeField] private GameObject MainMenu;
+
+    private bool gameStarted = false;
+    private static bool gameReplay = false;
     private void OnEnable()
     {
         ScoreManager.OnScoreChanged += CheckWinCondition;
@@ -28,28 +31,49 @@ public class GameUI : MonoBehaviour
 
     private void Start()
     {
-        // Game is running when the scene begins
-        Time.timeScale = 1f;
+        
 
         isGameOver = false;
+        gameStarted = false;
 
-        //Hide game over screen
+        //Hide both end screens
         GameOverPanel.SetActive(false);
         WinPanel.SetActive(false);
+
+        // Check if the game is being replayed
+        if (gameReplay)
+        {
+            // immediate replay begins new run
+            gameReplay = false;
+            startGame();
+        }
+        else
+        {
+            // if its the first launch of the game then it will display the main menu
+            mainMenu();
+        }
+
+
     }
 
     private void Update()
     {
-        // Stop checking after Game Over has happened
-        if (isGameOver || player == null) return;
+        // Stop checking after Game Over has happened, had to add gaemstarted so player does not lose before start is pressed
+        if (!gameStarted || isGameOver || player == null) return;
 
         // Display game over when the player falls too far, spent an hour realizing I never set this
         if (player.position.y <= fallKillZone) postGameOver();
     }
     public void postGameOver()
     {
-        // Set the panel to true and post it on players screen
+        // Current run as finished
+        isGameOver = true;
+        gameStarted = false; 
+
+        // Display only the game over screen
         GameOverPanel.SetActive(true);
+        WinPanel.SetActive(false);
+        MainMenu.SetActive(false);
 
         //release and display the mouse for the UI interaction
         Cursor.lockState = CursorLockMode.None;
@@ -61,7 +85,12 @@ public class GameUI : MonoBehaviour
 
     public void CheckWinCondition(int currentScore)
     {
-        if (isGameOver) 
+        Debug.Log(
+    $"Win check: Score={currentScore}, Started={gameStarted}, Ended={isGameOver}"
+);
+
+        // Only check the victory during the active gameplay
+        if (!gameStarted || isGameOver) 
         {
             return;
         
@@ -69,6 +98,7 @@ public class GameUI : MonoBehaviour
 
         if (currentScore >= winScore) 
         {
+            Debug.Log("Win score reached");
             winScreen();
         }
 
@@ -78,17 +108,12 @@ public class GameUI : MonoBehaviour
     {
         // Stop the screen from showing
         isGameOver = true;
+        gameStarted = false;
 
         //Display only the win scren
         WinPanel.SetActive(true);
         GameOverPanel.SetActive(false);
-
-        //Hide main menu panel
-        if (MainMenu != null) 
-        {
-            MainMenu.SetActive(false);
-        
-        }
+        MainMenu.SetActive(false);
 
         //Unlock the mouse
         Cursor.lockState = CursorLockMode.None;
@@ -99,6 +124,21 @@ public class GameUI : MonoBehaviour
 
     }
 
+    public void mainMenu() 
+    {
+        gameStarted = false;
+        isGameOver = false;
+
+        MainMenu.SetActive(true);
+        WinPanel.SetActive(false);
+        GameOverPanel.SetActive(false);
+
+        // Pause the game while the menu is open
+        Time.timeScale = 0f;
+
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+    }
     
     public void resetGame()
     {
@@ -110,19 +150,24 @@ public class GameUI : MonoBehaviour
             ScoreManager.Instance.resetScore();
         }
 
-        // Lock mouse for gameplay
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+        // This will cause Start method to skip the main menu after replay
+        gameReplay = true;
 
-        // Reset the time scale back to normal before reloading
-        Time.timeScale = 1f;
+        
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
 
     }
 
     public void startGame()
     {
+        Debug.Log("START GAME CALLED");
+
+        gameStarted = true;
+        isGameOver = false;
+
         MainMenu.SetActive(false);
+        GameOverPanel.SetActive(false);
+        WinPanel.SetActive(false);
 
         Time.timeScale = 1f;
 
@@ -136,12 +181,6 @@ public class GameUI : MonoBehaviour
     
     }
 
-    void OnCollisionEnter(Collision collision)
-    {
-        if (collision.gameObject.tag == "Player")
-        {
-            SceneManager.LoadScene(0);
-        }
-    }
+
 
 }
