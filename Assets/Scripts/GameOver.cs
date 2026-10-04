@@ -41,6 +41,12 @@ public class GameOver : MonoBehaviour
         Time.timeScale = 0f;
     }
 
+    public void winGame()
+    {
+        if (isGameOver) return;
+
+    }
+
     public void resetGame()
     {
         Time.timeScale = 1f;

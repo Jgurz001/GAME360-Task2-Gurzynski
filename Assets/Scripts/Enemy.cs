@@ -208,11 +208,6 @@ public class Enemy : MonoBehaviour
     private void Die() 
     {
 
-        //Notify the GameManager Singleton that an enemy died, will work on when we get to that point
-        if (GameManager.Instance != null) 
-        {
-            
-        }
         Destroy(gameObject);
     }
 
