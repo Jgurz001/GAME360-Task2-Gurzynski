@@ -268,7 +268,6 @@ GameObject:
   - component: {fileID: 33345643}
   - component: {fileID: 33345642}
   - component: {fileID: 33345641}
-  - component: {fileID: 33345640}
   - component: {fileID: 33345639}
   m_Layer: 0
   m_Name: KillZone
@@ -298,24 +297,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 10, y: 2.220446e-16, z: 10}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &33345640
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 33345638}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4c9fbd1140cd09d4faacda74ec9589da, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  GameOverPanel: {fileID: 194398537}
-  player: {fileID: 1961852788}
-  fallKillZone: -10
-  WinPanel: {fileID: 0}
-  winScore: 50
-  MainMenu: {fileID: 0}
 --- !u!23 &33345641
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -377,12 +358,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 33345638}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -11, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 1.5100859, y: -12.893275, z: -0.3484827}
   m_LocalScale: {x: 10, y: 1, z: 10}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 925022359}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &99847682
 PrefabInstance:
@@ -1030,19 +1011,19 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 194398537}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -0.3484827}
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 888011526}
   - {fileID: 1690680758}
   - {fileID: 24233396}
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 925022359}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 1.5100859, y: -1.8932755}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
 --- !u!1 &255266155
@@ -1485,7 +1466,6 @@ GameObject:
   - component: {fileID: 426103355}
   - component: {fileID: 426103354}
   - component: {fileID: 426103353}
-  - component: {fileID: 426103352}
   - component: {fileID: 426103356}
   - component: {fileID: 426103357}
   m_Layer: 0
@@ -1495,29 +1475,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!136 &426103352
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 426103351}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.5000001
-  m_Height: 2
-  m_Direction: 1
-  m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}
 --- !u!23 &426103353
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -2551,19 +2508,19 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 838736284}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -0.3484827}
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 502783359}
   - {fileID: 1986134307}
   - {fileID: 1028926637}
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 925022359}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 1.5100859, y: -1.8932755}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
 --- !u!1 &868430430
@@ -2928,7 +2885,6 @@ GameObject:
   - component: {fileID: 916524021}
   - component: {fileID: 916524026}
   - component: {fileID: 916524025}
-  - component: {fileID: 916524024}
   - component: {fileID: 916524023}
   - component: {fileID: 916524022}
   m_Layer: 0
@@ -2989,29 +2945,6 @@ MonoBehaviour:
   scoreValue: 10
   rotationSpeed: 50
   spin: {x: 30, y: 30, z: 30}
---- !u!136 &916524024
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 916524020}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.5000001
-  m_Height: 2
-  m_Direction: 1
-  m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}
 --- !u!23 &916524025
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -3346,7 +3279,11 @@ Transform:
   m_LocalPosition: {x: -1.5100859, y: 1.8932755, z: 0.3484827}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 194398543}
+  - {fileID: 838736290}
+  - {fileID: 1714150973}
+  - {fileID: 33345643}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &946181543
@@ -4559,7 +4496,6 @@ GameObject:
   - component: {fileID: 1074415538}
   - component: {fileID: 1074415537}
   - component: {fileID: 1074415536}
-  - component: {fileID: 1074415535}
   - component: {fileID: 1074415534}
   - component: {fileID: 1074415533}
   m_Layer: 0
@@ -4605,29 +4541,6 @@ MonoBehaviour:
   scoreValue: 10
   rotationSpeed: 50
   spin: {x: 30, y: 30, z: 30}
---- !u!136 &1074415535
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1074415532}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.5000001
-  m_Height: 2
-  m_Direction: 1
-  m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}
 --- !u!23 &1074415536
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -5477,7 +5390,7 @@ GameObject:
   - component: {fileID: 1274388433}
   - component: {fileID: 1274388432}
   m_Layer: 5
-  m_Name: RestartButton
+  m_Name: PlayButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5548,8 +5461,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 925022358}
-        m_TargetAssemblyTypeName: GameOver, Assembly-CSharp
-        m_MethodName: resetGame
+        m_TargetAssemblyTypeName: GameUI, Assembly-CSharp
+        m_MethodName: startGame
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -5844,7 +5757,7 @@ GameObject:
   - component: {fileID: 1362444422}
   - component: {fileID: 1362444421}
   m_Layer: 5
-  m_Name: WinScreen
+  m_Name: menu
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6381,7 +6294,6 @@ GameObject:
   - component: {fileID: 1557935187}
   - component: {fileID: 1557935186}
   - component: {fileID: 1557935185}
-  - component: {fileID: 1557935184}
   - component: {fileID: 1557935183}
   - component: {fileID: 1557935182}
   m_Layer: 0
@@ -6427,29 +6339,6 @@ MonoBehaviour:
   scoreValue: 10
   rotationSpeed: 50
   spin: {x: 30, y: 30, z: 30}
---- !u!136 &1557935184
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1557935181}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.5000001
-  m_Height: 2
-  m_Direction: 1
-  m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}
 --- !u!23 &1557935185
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -6845,7 +6734,6 @@ GameObject:
   - component: {fileID: 1602619744}
   - component: {fileID: 1602619743}
   - component: {fileID: 1602619742}
-  - component: {fileID: 1602619741}
   - component: {fileID: 1602619740}
   - component: {fileID: 1602619739}
   m_Layer: 0
@@ -6891,29 +6779,6 @@ MonoBehaviour:
   scoreValue: 10
   rotationSpeed: 50
   spin: {x: 30, y: 30, z: 30}
---- !u!136 &1602619741
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1602619738}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.5000001
-  m_Height: 2
-  m_Direction: 1
-  m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}
 --- !u!23 &1602619742
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -7751,7 +7616,7 @@ RectTransform:
   - {fileID: 1362444420}
   - {fileID: 1274388431}
   - {fileID: 1360546782}
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 925022359}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -8649,10 +8514,6 @@ SceneRoots:
   - {fileID: 1238094470}
   - {fileID: 149737768}
   - {fileID: 1101723405}
-  - {fileID: 194398543}
-  - {fileID: 838736290}
-  - {fileID: 1714150973}
-  - {fileID: 33345643}
   - {fileID: 925022359}
   - {fileID: 1573672380}
   - {fileID: 1175103164}
