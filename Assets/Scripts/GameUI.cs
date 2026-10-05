@@ -6,24 +6,37 @@ public class GameUI : MonoBehaviour
     [Header("Game Over Settings")]
     //Reference to our game over panel
     [SerializeField] private GameObject GameOverPanel;
+
+    // Player used for checking fall distance
     [SerializeField] private Transform player;
+    // Lowest allowed player position, used for kill zone
     [SerializeField] private float fallKillZone = -10f;
+    //Tracking for end of the run
     private bool isGameOver = false;
 
     [Header("Win Settings")]
+    // Victory screen 
     [SerializeField] private GameObject WinPanel;
+    //Score that is required to win
     [SerializeField] private int winScore = 50;
 
     [Header("Main Menu Settings")]
+    //Main menu screen
     [SerializeField] private GameObject MainMenu;
-
+    // Tracks if the gameplay has started
     private bool gameStarted = false;
+    //Checks if the scene is replaying
     private static bool gameReplay = false;
+
+    /// <summary>
+    ///  Listener for score change
+    /// </summary>
     private void OnEnable()
     {
         ScoreManager.OnScoreChanged += CheckWinCondition;
     }
 
+    // Stop listening for the score change
     private void OnDisable()
     {
         ScoreManager.OnScoreChanged -= CheckWinCondition;
@@ -32,7 +45,7 @@ public class GameUI : MonoBehaviour
     private void Start()
     {
         
-
+        // Reset the state of the game
         isGameOver = false;
         gameStarted = false;
 
@@ -95,7 +108,7 @@ public class GameUI : MonoBehaviour
             return;
         
         }
-
+        // Win after reaching the required score
         if (currentScore >= winScore) 
         {
             Debug.Log("Win score reached");
@@ -126,22 +139,25 @@ public class GameUI : MonoBehaviour
 
     public void mainMenu() 
     {
+        // Stop the gameplay
         gameStarted = false;
         isGameOver = false;
 
+        //Show the main menu
         MainMenu.SetActive(true);
         WinPanel.SetActive(false);
         GameOverPanel.SetActive(false);
 
         // Pause the game while the menu is open
         Time.timeScale = 0f;
-
+        // Release the mouse
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
     }
     
     public void resetGame()
     {
+        // Return game to normal speed
         Time.timeScale = 1f;
 
         // Resets the score stored within the persistent Singleton (Took me an hour to realize I never did this)
@@ -153,7 +169,7 @@ public class GameUI : MonoBehaviour
         // This will cause Start method to skip the main menu after replay
         gameReplay = true;
 
-        
+        // Reload current scene
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
 
     }
@@ -162,21 +178,25 @@ public class GameUI : MonoBehaviour
     {
         Debug.Log("START GAME CALLED");
 
+        // Begin the gameplay
         gameStarted = true;
         isGameOver = false;
 
+        // Show no screens 
         MainMenu.SetActive(false);
         GameOverPanel.SetActive(false);
         WinPanel.SetActive(false);
 
+        // Set game to normal speed/ resume
         Time.timeScale = 1f;
-
+        //Lock the mouse
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
 
     public void quitGame() 
     {
+        // Close the entire game
         Application.Quit();
     
     }

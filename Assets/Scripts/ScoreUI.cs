@@ -2,28 +2,28 @@ using UnityEngine;
 using TMPro;
 public class ScoreUI : MonoBehaviour
 {
+    // Texxt that will display the score
     public TMP_Text scoreText;
+
+    // Listen for the score changes
     private void OnEnable()
     {
         ScoreManager.OnScoreChanged += UpdateScore;
-        //Coin.OnCoinCollectedString += UpdateMessage;
+        
     }
+    //Stop listening for the score changes
     private void OnDisable()
     {
         ScoreManager.OnScoreChanged -= UpdateScore;
     }
-    // Start is called once before the first execution of Update after theMonoBehaviour is created
-    private void Awake()
-    {
-    }
+   
     void Start()
     {
+        // Display start score
         scoreText.text = "Score: 0";
     }
-    // Update is called once per frame
-    void Update()
-    {
-    }
+  
+    // Update the new score
     void UpdateScore(int s) =>
     scoreText.text = "Score: " + s;
 }

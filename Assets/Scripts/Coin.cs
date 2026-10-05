@@ -3,16 +3,13 @@ using UnityEngine;
 
 public class Coin : MonoBehaviour
 {
+    // Event that announves when a coin is collected
     public static event Action<int> OnCoinCollected;
     [Header("Coin Settings")]
     public int scoreValue = 10;
     public float rotationSpeed = 50f;
     public Vector3 spin = new Vector3(30f, 30f, 30f);
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
+   
 
     // Update is called once per frame
     void Update()

@@ -1,27 +1,28 @@
 using UnityEngine;
 
-
+// Ensure the enemy has a rigidbody
 [RequireComponent(typeof(Rigidbody))]
 public class Enemy : MonoBehaviour
 {
     [Header("Enemy Stats")]
-
-    //Number of hits the enemy can take
+    // Current and max health
     [SerializeField] float health, maxHealth = 3f;
 
     //Normal enemy movement speed
     public float moveSpeed = 2f;
 
-    //How quickly the enemy turns toard the player
+    //How quickly the enemy turns toward the player
     public float rotateSpeed = 360f;
 
     [Header("Attack Settings")]
+    // Damage dealt to the player
     [SerializeField] private int attackDamage = 10;
-    [SerializeField] private float attackRange = 1.5f;
+    
     //Enemy needs a cool down because spamming would cause issues
     [SerializeField] private float attackCooldown = 1f;
+    // Time for when the enemy can attack again
     private float attackTime;
-
+    // Enemy healthbar
     [SerializeField] FloatingHealthBar healthBar;
 
     [Header("AI")]
@@ -29,7 +30,7 @@ public class Enemy : MonoBehaviour
     //Enemy begins chasing when the player enters this range
     public float detectionRange = 5f;
 
-    //Ref to the player's transform
+    //Ref to the player's location
     private Transform player;
 
     //Reference to the enemy's 3D RigidBoy
@@ -43,21 +44,21 @@ public class Enemy : MonoBehaviour
         //Get the Rgidbody attached to the enemy
         rb = GetComponent<Rigidbody>();
 
-        //Component here in the event Animator is located on the model
+        // Get the animator on the enemy or its child
         animator = GetComponentInChildren<Animator>();
 
         if (animator == null) 
         {
             Debug.Log("Enemy could not find the Animator");
-        
-        
         }
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        // Begin with full health
         health = maxHealth;
+        // Display the full health
         if (healthBar != null) {
             healthBar.UpdateHealthBar(health, maxHealth);
         }
@@ -65,7 +66,7 @@ public class Enemy : MonoBehaviour
         GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
  
 
-        //Store the player's transform if one was found
+        //Store the player's position if one was found
         if (playerObject != null)
         {
             player = playerObject.transform;
@@ -94,11 +95,8 @@ public class Enemy : MonoBehaviour
         
         }
 
-        // Start with the enemy's normal movement speed
+        // Start with the enemy's movement speed
         float currentSpeed = moveSpeed;
-
-        //Increase enemy speed as the player's score increases, will be written later
-
 
         //Calculate the 3D distance between the enemy and player
         float distance = Vector3.Distance(transform.position, player.position);
@@ -107,7 +105,7 @@ public class Enemy : MonoBehaviour
         //this allows gravity to continue working
         float verticalVelocity = rb.linearVelocity.y;
 
-        // The enemy begins each physics frame considered stationary
+        // The enemy begins each frame as not moving
         bool isMoving = false;
        
 
@@ -122,12 +120,13 @@ public class Enemy : MonoBehaviour
             //Continue only if there is a valid direction
             if (direction.sqrMagnitude > 0.001f)
             {
+                // Convert the direction to length of one
                 direction.Normalize();
 
-                // Enemy is actively moving (Spent an hour realizing I was missing this)
+                // Enemy is actively moving, assists with animator (Spent an hour realizing I was missing this)
                 isMoving = true;
 
-                // Move toward the player on the z and z axes
+                // Move toward the player on the x and z axes
                 rb.linearVelocity = new Vector3(direction.x * currentSpeed, verticalVelocity, direction.z * currentSpeed);
 
                 // Determine the rotation needed to face the player
@@ -144,21 +143,22 @@ public class Enemy : MonoBehaviour
             // Stop horizontal movement when outside detection range, but preserve gravity and vertical movement
             rb.linearVelocity = new Vector3(0f, verticalVelocity, 0f);
         }
-
+        // Update the running animation
         if (animator != null)
         {
             animator.SetBool("isRunning", isMoving);
-       
         }   
     }
 
     public void TakeDamage(float damageAmount)
     {
-        
+        // Removes health from the enemy
         health -= damageAmount;
 
         Debug.Log($"Enemy took {damageAmount} damage!!! Current health: {health}");
+        // Update the health bar
         healthBar.UpdateHealthBar(health, maxHealth);
+        //Destroy the enemy at zero health
         if (health <= 0)
         {
             Die();
@@ -177,24 +177,26 @@ public class Enemy : MonoBehaviour
 
     private void OnCollisionStay(Collision collision)
     {
+        // Stop if the attack is cooling down
         if (Time.time < attackTime) 
         {
             return; 
         }
 
-        //Search the collided object and its parents
+        //Search the collided object and its parents, essentially searching for the playercontroller
         PlayerController playerHealth = collision.gameObject.GetComponentInParent<PlayerController>();
 
         if (playerHealth != null) 
         {
+            // Attack the player
             Attack(playerHealth);
 
-            //cooldown
+            // Set next allowed attack time
             attackTime = Time.time + attackCooldown;
         }
     }
 
-    //Death method that kills off the enemy, same will be applied in the player
+  
     private void Die() 
     {
 
