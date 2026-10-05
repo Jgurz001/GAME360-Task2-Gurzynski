@@ -62,9 +62,10 @@ public class PlayerController : MonoBehaviour
     // Called before the first frame update
     void Start()
     {
-
+        // Set players health back to max
         health = maxHealth;
        
+        // 
         healthBar = GetComponentInChildren<FloatingHealthBar>();
         healthBar.UpdateHealthBar(health, maxHealth);
 
@@ -85,8 +86,6 @@ public class PlayerController : MonoBehaviour
     // Called once per frame
     void Update()
     {
-       
-
         HandleMovement();
         HandleJumping();
         Attack();
@@ -100,14 +99,12 @@ public class PlayerController : MonoBehaviour
         float horizontal = Input.GetAxisRaw("Horizontal"); // A/D or Left/Right arrows
         float vertical = Input.GetAxisRaw("Vertical");     // W/S or Up/Down arrows
 
+        // IF the camera is not found
         if (cameraTransform == null) 
         {
-            return;
-        
-        
+            Debug.Log("Camera NOT found.");
+            return;   
         }
-
-
         //Get the camera's forward and right directions
         Vector3 cameraForward = cameraTransform.forward;
         Vector3 cameraRight = cameraTransform.right;
@@ -152,7 +149,7 @@ public class PlayerController : MonoBehaviour
         // Check for jump input
         if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
         {
-            //
+            
             isGrounded = false;
 
             rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
@@ -166,7 +163,9 @@ public class PlayerController : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Ground"))
         {
+
             isGrounded = true;
+
             Debug.Log("Player landed on ground");
         }
     }
@@ -181,6 +180,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    // Method for attacking
     void Attack()
     {
 
@@ -189,9 +189,10 @@ public class PlayerController : MonoBehaviour
             return;
         }
         
-        Debug.Log("Attack pressed");
+       
 
         if (attackPoint == null) {
+            // For debugging
             Debug.Log("Attack Point not assigned");
             return;
         }
@@ -200,10 +201,11 @@ public class PlayerController : MonoBehaviour
         Collider[] hitEnemies = Physics.OverlapSphere(attackPoint.position, attackRange, enemyLayers, QueryTriggerInteraction.Collide);
         foreach (Collider enemyCollider in hitEnemies) {
 
-
+            // Call on the enemy script and get the Enemy health
             Enemy enemyHealth = enemyCollider.GetComponent<Enemy>();
-            if (enemyHealth != null) {
 
+            if (enemyHealth != null) {
+                Debug.Log("Attack pressed");
                 enemyHealth.TakeDamage(attackDamage);
             }
 
@@ -211,15 +213,18 @@ public class PlayerController : MonoBehaviour
 
 
     }
-
+    // Shows the range of the player/enemy in the scene, good for adjusting
     private void OnDrawGizmosSelected()
     {
+        //
         if (attackPoint == null) return;
-
+        // Make the color of the sphere
         Gizmos.color = Color.red;
+        //Draws the wire sphere around the character
         Gizmos.DrawWireSphere(attackPoint.position, attackRange);
     }
 
+    //Method for player/enemy taking damage
     public void TakeDamage(float damageAmount) {
 
         health -= damageAmount;
@@ -234,8 +239,10 @@ public class PlayerController : MonoBehaviour
 
     private void Die()
     {
+        //
         if (gameUI != null)
         {
+            //Call game over panel
             gameUI.postGameOver();
         }
         

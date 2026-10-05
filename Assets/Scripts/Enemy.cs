@@ -111,8 +111,6 @@ public class Enemy : MonoBehaviour
         bool isMoving = false;
        
 
-   
-
         if (distance <= detectionRange)
         {
             //Find the direction from the enemy to the player
@@ -150,11 +148,8 @@ public class Enemy : MonoBehaviour
         if (animator != null)
         {
             animator.SetBool("isRunning", isMoving);
-        
-        
-        }
-      
-    
+       
+        }   
     }
 
     public void TakeDamage(float damageAmount)
@@ -167,9 +162,7 @@ public class Enemy : MonoBehaviour
         if (health <= 0)
         {
             Die();
-        }
-        
-
+        }        
 
     }
 
@@ -179,8 +172,6 @@ public class Enemy : MonoBehaviour
         playerHealth.TakeDamage(attackDamage);
 
         Debug.Log($"Enemy attacked player for  {attackDamage} damage!");
-        
-
 
     }
 
@@ -188,8 +179,7 @@ public class Enemy : MonoBehaviour
     {
         if (Time.time < attackTime) 
         {
-            return;
-        
+            return; 
         }
 
         //Search the collided object and its parents
@@ -211,11 +201,10 @@ public class Enemy : MonoBehaviour
         Destroy(gameObject);
     }
 
-    // This is the method that displays the enemies detection range, this is purely for visual testing
+    // Shows the range of the player/enemy in the scene, good for adjusting
     private void OnDrawGizmosSelected()
     {
         // Display the enemy's 3D detection range in the scene view
-
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, detectionRange);
     }
