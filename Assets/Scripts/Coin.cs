@@ -8,7 +8,7 @@ public class Coin : MonoBehaviour
     [Header("Coin Settings")]
     public int scoreValue = 10;
     public float rotationSpeed = 50f;
-    public Vector3 spin = new Vector3(30f, 30f, 30f);
+    public Vector3 spin = new Vector3(30f, 50f, 30f);
    
 
     // Update is called once per frame
