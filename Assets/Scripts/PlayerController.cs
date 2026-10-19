@@ -4,6 +4,13 @@ using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
+    // Current State Machine
+    public enum PlayerState { Run, Hurt, Dead }
+
+    public PlayerState State { get; private set; } = PlayerState.Run;
+    private float timer;            // how long we've been in this state
+
+
     [Header("Movement Settings")]
     // player speed
     public float moveSpeed = 3f;
@@ -95,6 +102,17 @@ public class PlayerController : MonoBehaviour
     }
 
 
+    private void SwitchTo(PlayerState next)
+    {
+        if (State == next) return;
+
+        State = next;
+        timer = 0f;
+
+        /*// clean up the old look
+        look.material.color = normalColor;
+        transform.localScale = baseScale;*/
+    }
 
     void HandleMovement()
     {
@@ -234,7 +252,8 @@ public class PlayerController : MonoBehaviour
     }
 
     //Method for player/enemy taking damage
-    public void TakeDamage(float damageAmount) {
+    public void TakeDamage(float damageAmount) 
+    {
 
         // Take player damage
         health -= damageAmount;
