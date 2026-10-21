@@ -6,7 +6,7 @@ public class Coin : MonoBehaviour
     // Event that announves when a coin is collected
     public static event Action<int> OnCoinCollected;
     [Header("Coin Settings")]
-    public int scoreValue = 10;
+    public int scoreValue = 50;
     public float rotationSpeed = 50f;
     public Vector3 spin = new Vector3(30f, 50f, 30f);
    
