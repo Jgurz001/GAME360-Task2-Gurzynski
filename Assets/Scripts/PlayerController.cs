@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 
+
 public class PlayerController : MonoBehaviour
 {
     // Current State Machine
@@ -99,6 +100,9 @@ public class PlayerController : MonoBehaviour
         HandleMovement();
         HandleJumping();
         Attack();
+
+
+
     }
 
 
@@ -114,6 +118,7 @@ public class PlayerController : MonoBehaviour
         transform.localScale = baseScale;*/
     }
 
+    // This will become TickRun()
     void HandleMovement()
     {
         // Get input from keyboard
@@ -166,6 +171,7 @@ public class PlayerController : MonoBehaviour
 
     }
 
+    // This will be TickJump
     void HandleJumping()
     {
         // Check for jump input, only jump if player is on the ground

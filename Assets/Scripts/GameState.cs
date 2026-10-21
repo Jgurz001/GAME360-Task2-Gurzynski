@@ -1,16 +1,2 @@
-using UnityEngine;
-
-public class GameState : MonoBehaviour
-{
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-}
+// The whole game is always in exactly ONE of these.
+public enum GameState { Playing, Paused, Won, Lost }
