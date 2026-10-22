@@ -1,9 +1,18 @@
 using System;
 using UnityEngine;
-public class ScoreManager : MonoBehaviour
+using UnityEngine.InputSystem;
+using static PlayerController;
+
+public class GameManager : MonoBehaviour
 {
+    public GameState State { get; private set; } = GameState.Paused;
+
+    public static event Action<GameState> OnGameStateChanged;
+
+    private bool pauseEnabled = false;
+
     // Provides global access to one scoremanager 
-    public static ScoreManager Instance { get; private set; }
+    public static GameManager Instance { get; private set; }
     // Announces when the score has changed
     public static event Action<int> OnScoreChanged;
     // Variable for the score
@@ -11,6 +20,48 @@ public class ScoreManager : MonoBehaviour
     // Allows other scripts to read the score
     public int CurrentScore => score;
 
+    void Update()
+    {
+        
+
+        if (!pauseEnabled || Keyboard.current == null)
+        {
+            return;
+        }
+
+        if (!Keyboard.current.escapeKey.wasPressedThisFrame)
+        {
+            return;
+        }
+
+
+        switch (State)
+        {
+            case GameState.Paused: SwitchTo(GameState.Paused); break;
+            case GameState.Playing: SwitchTo(GameState.Playing); break;
+            case GameState.Won:
+            case GameState.Lost: break;
+        }
+
+    }
+    private void SwitchTo(GameState next)
+    {
+        if (State == next) return;
+
+        Debug.Log("Game: " + State + " -> " + next);
+
+        State = next;
+
+        // Only playing utilizese normal game speed
+        Time.timeScale = State == GameState.Playing ? 1f : 0f;
+
+        //Notify UI and other obserevers
+        OnGameStateChanged?.Invoke(State);
+
+        
+    }
+
+    
 
     private void Awake()
     {
@@ -48,5 +99,18 @@ public class ScoreManager : MonoBehaviour
 
         Debug.Log("Score has been RESET to 0");
     
+    }
+    public void gameStart() 
+    {
+        pauseEnabled = true;
+        SwitchTo(GameState.Playing);
+    }
+
+    public void gameEnd(GameState result) 
+    {
+        if (result != GameState.Won && result != GameState.Lost) { return; }
+
+        pauseEnabled = false;
+        SwitchTo(result);
     }
 }

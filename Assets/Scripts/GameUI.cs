@@ -33,13 +33,13 @@ public class GameUI : MonoBehaviour
     /// </summary>
     private void OnEnable()
     {
-        ScoreManager.OnScoreChanged += CheckWinCondition;
+        GameManager.OnScoreChanged += CheckWinCondition;
     }
 
     // Stop listening for the score change
     private void OnDisable()
     {
-        ScoreManager.OnScoreChanged -= CheckWinCondition;
+        GameManager.OnScoreChanged -= CheckWinCondition;
     }
 
     private void Start()
@@ -161,9 +161,9 @@ public class GameUI : MonoBehaviour
         Time.timeScale = 1f;
 
         // Resets the score stored within the persistent Singleton (Took me an hour to realize I never did this)
-        if (ScoreManager.Instance != null) 
+        if (GameManager.Instance != null) 
         {
-            ScoreManager.Instance.resetScore();
+            GameManager.Instance.resetScore();
         }
 
         // This will cause Start method to skip the main menu after replay
