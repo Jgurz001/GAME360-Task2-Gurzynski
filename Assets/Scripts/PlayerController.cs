@@ -6,11 +6,12 @@ using UnityEngine.InputSystem;
 public class PlayerController : MonoBehaviour
 {
     // Current State Machine
-    public enum PlayerState { Run, Hurt, Dead }
+    public enum PlayerState { Run, Jump, Attack, Hurt, Dead }
 
     public PlayerState State { get; private set; } = PlayerState.Run;
     private float timer;            // how long we've been in this state
-
+    [SerializeField] private float attackTime = 0.4f;
+    [SerializeField] private float hurtTime = 0.5f;
 
     [Header("Movement Settings")]
     // player speed
@@ -97,21 +98,40 @@ public class PlayerController : MonoBehaviour
     // Called once per frame
     void Update()
     {
-        HandleMovement();
+        /*HandleMovement();
         HandleJumping();
-        Attack();
+        Attack();*/
+
+        if (Time.timeScale == 0f) 
+        {
+            return;
+        }
+
+        timer += Time.deltaTime;
 
 
+        switch (State) 
+        {
+            case PlayerState.Run: TickRun(); break;
+            //case PlayerState.Hurt: TickHurt(); break;
+            case PlayerState.Jump: TickJump(); break;
+            case PlayerState.Attack: TickAttack(); break;
+            case PlayerState.Dead: TickDead(); break;
+        }
 
     }
 
+ 
 
     private void SwitchTo(PlayerState next)
     {
         if (State == next) return;
 
+        Debug.Log(name + ":" + State + " -> " + next);
+
         State = next;
         timer = 0f;
+
 
         /*// clean up the old look
         look.material.color = normalColor;
@@ -119,8 +139,29 @@ public class PlayerController : MonoBehaviour
     }
 
     // This will become TickRun()
-    void HandleMovement()
+    private void TickRun()
     {
+
+        //Enter the Jump state when space bar is pressed
+        if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
+        {
+            SwitchTo(PlayerState.Jump);
+            TickJump();
+            return;
+
+        }
+
+        //Enter the attack state when left mouse is clicked
+        if (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame)
+        {
+
+            SwitchTo(PlayerState.Attack);
+            TickAttack();
+            return;
+
+        }
+
+
         // Get input from keyboard
         float horizontal = Input.GetAxisRaw("Horizontal"); // A/D or Left/Right arrows
         float vertical = Input.GetAxisRaw("Vertical");     // W/S or Up/Down arrows
@@ -172,19 +213,37 @@ public class PlayerController : MonoBehaviour
     }
 
     // This will be TickJump
-    void HandleJumping()
+    private void TickJump()
     {
-        // Check for jump input, only jump if player is on the ground
+
+        //Return to normal controls after landing
+        if (timer == 0f)
+        {
+            isGrounded = false;
+            rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+            
+            //Play jump animation
+            animator.SetTrigger("Jump");
+            Debug.Log("Player jumped!");
+        }
+
+        if (isGrounded && timer > 0.1f)
+        {
+            SwitchTo(PlayerState.Run);
+        
+        }
+
+
+        /*// Check for jump input, only jump if player is on the ground
         if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
         {
             // prevent another jump in the air
             isGrounded = false;
             // Apply instant upward force
             rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
-            //Play jump animation
-            animator.SetTrigger("Jump");
-            Debug.Log("Player jumped!");
-        }
+           
+            
+        }*/
     }
 
     // Called when this collider/rigidbody has begun touching another
@@ -212,7 +271,7 @@ public class PlayerController : MonoBehaviour
     }
 
     // Method for attacking
-    void Attack()
+    void TickAttack()
     {
          // Continue attacking after left click is pressed (Left it this way for spamming)
         if (Mouse.current == null || !Mouse.current.leftButton.wasPressedThisFrame) {
@@ -268,12 +327,12 @@ public class PlayerController : MonoBehaviour
         //Kill player/ end game at zero
         if (health <= 0) 
         {
-            Die();        
+            TickDead();        
         }
 
     }
 
-    private void Die()
+    private void TickDead()
     {
         // Display gameover screen
         if (gameUI != null)
