@@ -113,7 +113,7 @@ public class PlayerController : MonoBehaviour
         switch (State) 
         {
             case PlayerState.Run: TickRun(); break;
-            //case PlayerState.Hurt: TickHurt(); break;
+            case PlayerState.Hurt: TickHurt(); break;
             case PlayerState.Jump: TickJump(); break;
             case PlayerState.Attack: TickAttack(); break;
             case PlayerState.Dead: TickDead(); break;
@@ -342,17 +342,41 @@ public class PlayerController : MonoBehaviour
     //Method for player/enemy taking damage
     public void TakeDamage(float damageAmount) 
     {
-
+       // Prevent repeated damage during hurt or dead states
+        if (State == PlayerState.Hurt || State == PlayerState.Dead)
+        {
+            return;
+        
+        }
         // Take player damage
         health -= damageAmount;
         //Update the healthbar
         healthBar.UpdateHealthBar(health, maxHealth);
         //Kill player/ end game at zero
-        if (health <= 0) 
+        if (health <= 0f)
         {
-            TickDead();        
+            SwitchTo(PlayerState.Dead);
+        }
+        else
+        {
+            SwitchTo(PlayerState.Hurt);
+
         }
 
+
+ 
+
+    }
+
+    private void TickHurt()
+    {
+
+        // Return to normal after the Hurt Timer
+        if (timer >= hurtTime)
+        {
+            SwitchTo(PlayerState.Run);
+
+        }
     }
 
     private void TickDead()
