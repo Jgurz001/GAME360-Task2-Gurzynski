@@ -227,11 +227,7 @@ public class PlayerController : MonoBehaviour
             Debug.Log("Player jumped!");
         }
 
-        if (isGrounded && timer > 0.1f)
-        {
-            SwitchTo(PlayerState.Run);
-        
-        }
+       
 
 
         /*// Check for jump input, only jump if player is on the ground
@@ -256,6 +252,11 @@ public class PlayerController : MonoBehaviour
             isGrounded = true;
 
             Debug.Log("Player landed on ground");
+
+            if (State == PlayerState.Jump)
+            {
+                SwitchTo(PlayerState.Run);
+            }
         }
     }
 
