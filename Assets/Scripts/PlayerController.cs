@@ -161,16 +161,23 @@ public class PlayerController : MonoBehaviour
 
         }
 
+        playerMovement();
 
+        
+
+
+    }
+    private void playerMovement() 
+    {
         // Get input from keyboard
         float horizontal = Input.GetAxisRaw("Horizontal"); // A/D or Left/Right arrows
         float vertical = Input.GetAxisRaw("Vertical");     // W/S or Up/Down arrows
 
         // IF the camera is not found
-        if (cameraTransform == null) 
+        if (cameraTransform == null)
         {
             Debug.Log("Camera NOT found.");
-            return;   
+            return;
         }
         //Get the camera's forward and right directions
         Vector3 cameraForward = cameraTransform.forward;
@@ -193,7 +200,7 @@ public class PlayerController : MonoBehaviour
         // Update the running animatiopn
         animator.SetBool("isRunning", isMoving);
 
-        if (isMoving) 
+        if (isMoving)
         {
 
             // Find the rotation that faces the movement direction
@@ -201,7 +208,7 @@ public class PlayerController : MonoBehaviour
 
             //Gradually rotate the player towards the target
             transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
-          
+
         }
 
         // Keep the Rigidbody's current vertical speed for jump
@@ -209,8 +216,8 @@ public class PlayerController : MonoBehaviour
         //Apply camera-relative horizontal movement
         rb.linearVelocity = new Vector3(moveDirection.x * moveSpeed, velocity.y, moveDirection.z * moveSpeed);
 
-
     }
+
 
     // This will be TickJump
     private void TickJump()
@@ -227,8 +234,8 @@ public class PlayerController : MonoBehaviour
             Debug.Log("Player jumped!");
         }
 
-       
 
+        playerMovement();
 
         /*// Check for jump input, only jump if player is on the ground
         if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
@@ -274,35 +281,50 @@ public class PlayerController : MonoBehaviour
     // Method for attacking
     void TickAttack()
     {
-         // Continue attacking after left click is pressed (Left it this way for spamming)
-        if (Mouse.current == null || !Mouse.current.leftButton.wasPressedThisFrame) {
-            
+        // Continue attacking after left click is pressed (Left it this way for spamming)
+        /*if (Mouse.current == null || !Mouse.current.leftButton.wasPressedThisFrame) {
+
             return;
-        }
-        
-       
-        // stop if attack point is missing
-        if (attackPoint == null) {
-            // For debugging
-            Debug.Log("Attack Point not assigned");
-            return;
-        }
+        }*/
 
-        // This will find enemy colliders inside of the attack sphere
-        Collider[] hitEnemies = Physics.OverlapSphere(attackPoint.position, attackRange, enemyLayers, QueryTriggerInteraction.Collide);
-        // Check every single collider that was found
-        foreach (Collider enemyCollider in hitEnemies) {
-
-            // Call on the enemy script and get the Enemy health
-            Enemy enemyHealth = enemyCollider.GetComponent<Enemy>();
-
-            if (enemyHealth != null) {
-                Debug.Log("Attack pressed");
-                // Damage the enemy
-                enemyHealth.TakeDamage(attackDamage);
+        if (timer == 0f)
+        {
+            // stop if attack point is missing
+            if (attackPoint == null)
+            {
+                // For debugging
+                Debug.Log("Attack Point not assigned");
+                return;
             }
 
+            // This will find enemy colliders inside of the attack sphere
+            Collider[] hitEnemies = Physics.OverlapSphere(attackPoint.position, attackRange, enemyLayers, QueryTriggerInteraction.Collide);
+            // Check every single collider that was found
+            foreach (Collider enemyCollider in hitEnemies)
+            {
+
+                // Call on the enemy script and get the Enemy health
+                Enemy enemyHealth = enemyCollider.GetComponent<Enemy>();
+
+                if (enemyHealth != null)
+                {
+                    Debug.Log("Attack pressed");
+                    // Damage the enemy
+                    enemyHealth.TakeDamage(attackDamage);
+                }
+
+            }
         }
+
+        playerMovement();
+
+        //Return to normal controls after the attack timer has ended
+        if (timer >= attackTime)
+        {
+            SwitchTo(PlayerState.Run);
+        
+        }
+        
 
 
     }
