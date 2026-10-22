@@ -28,18 +28,24 @@ public class GameUI : MonoBehaviour
     //Checks if the scene is replaying
     private static bool gameReplay = false;
 
+
+    [Header("Pause Settings")]
+    [SerializeField] private GameObject PauseMenu;
+
     /// <summary>
     ///  Listener for score change
     /// </summary>
     private void OnEnable()
     {
         GameManager.OnScoreChanged += CheckWinCondition;
+        GameManager.OnGameStateChanged += HandleGameStateChanged;
     }
 
     // Stop listening for the score change
     private void OnDisable()
     {
         GameManager.OnScoreChanged -= CheckWinCondition;
+        GameManager.OnGameStateChanged -= HandleGameStateChanged;
     }
 
     private void Start()
@@ -77,23 +83,78 @@ public class GameUI : MonoBehaviour
         // Display game over when the player falls too far, spent an hour realizing I never set this
         if (player.position.y <= fallKillZone) postGameOver();
     }
+
+
+    //Observer methd
+    private void HandleGameStateChanged(GameState newState)
+    {
+        switch (newState) 
+        {
+            case GameState.Playing:
+                PauseMenu.SetActive(false);
+                GameOverPanel.SetActive(false);
+                WinPanel.SetActive(false);
+                MainMenu.SetActive(false);
+
+                //release and display the mouse for the UI interaction
+                Cursor.lockState = CursorLockMode.Locked;
+                Cursor.visible = false;
+                break;
+
+            case GameState.Paused:
+                PauseMenu.SetActive(true);
+
+                //release and display the mouse for the UI interaction
+                Cursor.lockState = CursorLockMode.None;
+                Cursor.visible = true;
+
+                break;
+
+            case GameState.Won:
+                // Stop the screen from showing
+                isGameOver = true;
+                gameStarted = false;
+
+                //Display only the win scren
+                PauseMenu.SetActive(false);
+                WinPanel.SetActive(true);
+                GameOverPanel.SetActive(false);
+                MainMenu.SetActive(false);
+
+                //Unlock the mouse
+                Cursor.lockState = CursorLockMode.None;
+                Cursor.visible = true;
+                break;
+
+            case GameState.Lost:
+                // Current run as finished
+                isGameOver = true;
+                gameStarted = false;
+
+                // Display only the game over screen
+                GameOverPanel.SetActive(true);
+                WinPanel.SetActive(false);
+                MainMenu.SetActive(false);
+                PauseMenu.SetActive(false);
+                //release and display the mouse for the UI interaction
+                Cursor.lockState = CursorLockMode.None;
+                Cursor.visible = true;
+
+                break;
+        }
+    }
+
+
+
+
     public void postGameOver()
     {
-        // Current run as finished
-        isGameOver = true;
-        gameStarted = false; 
-
-        // Display only the game over screen
-        GameOverPanel.SetActive(true);
-        WinPanel.SetActive(false);
-        MainMenu.SetActive(false);
-
-        //release and display the mouse for the UI interaction
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
-
-        // Freeze everything in the game
-        Time.timeScale = 0f;
+        if (isGameOver)
+        {
+            return;
+        
+        }
+        GameManager.Instance.gameEnd(GameState.Lost);
     }
 
     public void CheckWinCondition(int currentScore)
@@ -119,21 +180,12 @@ public class GameUI : MonoBehaviour
 
     public void winScreen()
     {
-        // Stop the screen from showing
-        isGameOver = true;
-        gameStarted = false;
+        if (isGameOver)
+        {
+            return;
 
-        //Display only the win scren
-        WinPanel.SetActive(true);
-        GameOverPanel.SetActive(false);
-        MainMenu.SetActive(false);
-
-        //Unlock the mouse
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
-
-        // Freeze everything in the game
-        Time.timeScale = 0f;
+        }
+        GameManager.Instance.gameEnd(GameState.Won);
 
     }
 
@@ -147,6 +199,7 @@ public class GameUI : MonoBehaviour
         MainMenu.SetActive(true);
         WinPanel.SetActive(false);
         GameOverPanel.SetActive(false);
+        PauseMenu.SetActive(false);
 
         // Pause the game while the menu is open
         Time.timeScale = 0f;
@@ -186,14 +239,19 @@ public class GameUI : MonoBehaviour
         MainMenu.SetActive(false);
         GameOverPanel.SetActive(false);
         WinPanel.SetActive(false);
+        PauseMenu.SetActive(false);
 
-        // Set game to normal speed/ resume
-        Time.timeScale = 1f;
-        //Lock the mouse
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+
+        GameManager.Instance.gameStart();
     }
 
+    public void resumeGame()
+    {
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.resumeGame();
+        }
+    }
     public void quitGame() 
     {
         // Close the entire game

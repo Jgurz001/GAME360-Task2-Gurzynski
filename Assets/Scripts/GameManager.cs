@@ -37,8 +37,8 @@ public class GameManager : MonoBehaviour
 
         switch (State)
         {
-            case GameState.Paused: SwitchTo(GameState.Paused); break;
-            case GameState.Playing: SwitchTo(GameState.Playing); break;
+            case GameState.Paused: SwitchTo(GameState.Playing); break;
+            case GameState.Playing: SwitchTo(GameState.Paused); break;
             case GameState.Won:
             case GameState.Lost: break;
         }
@@ -112,5 +112,13 @@ public class GameManager : MonoBehaviour
 
         pauseEnabled = false;
         SwitchTo(result);
+    }
+
+    public void resumeGame()
+    {
+        if (State == GameState.Paused)
+        {
+            SwitchTo(GameState.Playing);
+        }
     }
 }
