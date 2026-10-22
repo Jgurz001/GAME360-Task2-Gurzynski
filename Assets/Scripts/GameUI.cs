@@ -32,9 +32,8 @@ public class GameUI : MonoBehaviour
     [Header("Pause Settings")]
     [SerializeField] private GameObject PauseMenu;
 
-    /// <summary>
-    ///  Listener for score change
-    /// </summary>
+   
+
     private void OnEnable()
     {
         GameManager.OnScoreChanged += CheckWinCondition;
@@ -85,7 +84,7 @@ public class GameUI : MonoBehaviour
     }
 
 
-    //Observer methd
+    //Observer method
     private void HandleGameStateChanged(GameState newState)
     {
         switch (newState) 

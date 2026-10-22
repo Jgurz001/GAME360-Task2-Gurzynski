@@ -10,7 +10,7 @@ public class PlayerController : MonoBehaviour
 
     public PlayerState State { get; private set; } = PlayerState.Run;
     private float timer;            // how long we've been in this state
-    [SerializeField] private float attackTime = 0.4f;
+    [SerializeField] private float attackTime = 0.15f;
     [SerializeField] private float hurtTime = 0.5f;
 
     [Header("Movement Settings")]
