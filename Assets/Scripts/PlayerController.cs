@@ -13,6 +13,12 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float attackTime = 0.15f;
     [SerializeField] private float hurtTime = 0.5f;
 
+    [SerializeField] private float deathStateTimer = 1.5f;
+
+    private bool deathScreenShown;
+
+
+
     [Header("Movement Settings")]
     // player speed
     public float moveSpeed = 3f;
@@ -156,16 +162,13 @@ public class PlayerController : MonoBehaviour
         {
 
             SwitchTo(PlayerState.Attack);
+            animator.SetTrigger("Attack");
             TickAttack();
             return;
 
         }
 
         playerMovement();
-
-        
-
-
     }
     private void playerMovement() 
     {
@@ -325,8 +328,6 @@ public class PlayerController : MonoBehaviour
         
         }
         
-
-
     }
     // Shows the range of the player/enemy in the scene, good for adjusting
     private void OnDrawGizmosSelected()
@@ -356,15 +357,13 @@ public class PlayerController : MonoBehaviour
         if (health <= 0f)
         {
             SwitchTo(PlayerState.Dead);
+            animator.SetTrigger("Dead");
         }
         else
         {
             SwitchTo(PlayerState.Hurt);
-
+            animator.SetTrigger("Reaction");
         }
-
-
- 
 
     }
 
@@ -381,11 +380,19 @@ public class PlayerController : MonoBehaviour
 
     private void TickDead()
     {
-        // Display gameover screen
-        if (gameUI != null)
+        //Stop player while dying
+        rb.linearVelocity = Vector3.zero;
+
+        // Wait before displaying game over
+        if (timer >= deathStateTimer && !deathScreenShown)
         {
-            //Call game over panel
-            gameUI.postGameOver();
-        }   
+            deathScreenShown = true;
+            // Display gameover screen
+            if (gameUI != null)
+            {
+                //Call game over panel
+                gameUI.postGameOver();
+            } 
+        }  
     }
 }
