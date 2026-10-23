@@ -161,8 +161,9 @@ public class PlayerController : MonoBehaviour
         if (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame)
         {
 
-            SwitchTo(PlayerState.Attack);
+            
             animator.SetTrigger("Attack");
+            SwitchTo(PlayerState.Attack);
             TickAttack();
             return;
 
@@ -361,8 +362,9 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            SwitchTo(PlayerState.Hurt);
+            
             animator.SetTrigger("Reaction");
+            SwitchTo(PlayerState.Hurt);
         }
 
     }
@@ -370,6 +372,9 @@ public class PlayerController : MonoBehaviour
     private void TickHurt()
     {
 
+        // Stop horizontal movement but keep gravity
+        Vector3 velocity = rb.linearVelocity;
+        rb.linearVelocity = new Vector3(0f, velocity.y, 0f);
         // Return to normal after the Hurt Timer
         if (timer >= hurtTime)
         {

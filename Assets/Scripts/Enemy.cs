@@ -162,8 +162,13 @@ public class Enemy : MonoBehaviour
         if (health <= 0)
         {
             Die();
-        }        
+        }
 
+        // Play Reaction only when the enemy survives
+        if (animator != null)
+        {
+            animator.SetTrigger("Reaction");
+        }
     }
 
     void Attack(PlayerController playerHealth)
