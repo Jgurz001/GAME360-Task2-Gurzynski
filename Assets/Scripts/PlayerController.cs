@@ -5,19 +5,20 @@ using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
-    // Current State Machine
+    // Current State Machine that the player can enter
     public enum PlayerState { Run, Jump, Attack, Hurt, Dead }
 
+    //Other scripts may read the state but they cannot change it
     public PlayerState State { get; private set; } = PlayerState.Run;
-    private float timer;            // how long we've been in this state
+    // how long we've been in this state
+    private float timer;            
+
+    //Length of each time state, can be edited in the inspector
     [SerializeField] private float attackTime = 0.15f;
     [SerializeField] private float hurtTime = 0.5f;
-
     [SerializeField] private float deathStateTimer = 1.5f;
-
+    // Prevents game over screen from opening twice
     private bool deathScreenShown;
-
-
 
     [Header("Movement Settings")]
     // player speed
@@ -104,18 +105,15 @@ public class PlayerController : MonoBehaviour
     // Called once per frame
     void Update()
     {
-        /*HandleMovement();
-        HandleJumping();
-        Attack();*/
-
+        // Stop all player logic when the game is paused
         if (Time.timeScale == 0f) 
         {
             return;
         }
-
+        // Counts time spent in current state
         timer += Time.deltaTime;
 
-
+        // Run behavior for the current state
         switch (State) 
         {
             case PlayerState.Run: TickRun(); break;
@@ -128,23 +126,22 @@ public class PlayerController : MonoBehaviour
     }
 
  
-
+    // Method that can change the player state
     private void SwitchTo(PlayerState next)
     {
+        //Do nothing if player is already in the state
         if (State == next) return;
 
+        // For console purposes to see what is being done
         Debug.Log(name + ":" + State + " -> " + next);
 
+        // Enter new state, restart its timer
         State = next;
         timer = 0f;
 
-
-        /*// clean up the old look
-        look.material.color = normalColor;
-        transform.localScale = baseScale;*/
     }
 
-    // This will become TickRun()
+    // Reads normal movement such as jump and attack inputs
     private void TickRun()
     {
 
@@ -161,7 +158,7 @@ public class PlayerController : MonoBehaviour
         if (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame)
         {
 
-            
+            // Play the attack animation
             animator.SetTrigger("Attack");
             SwitchTo(PlayerState.Attack);
             TickAttack();
@@ -171,6 +168,7 @@ public class PlayerController : MonoBehaviour
 
         playerMovement();
     }
+    //Controls player movement relative to the camera
     private void playerMovement() 
     {
         // Get input from keyboard
@@ -237,20 +235,9 @@ public class PlayerController : MonoBehaviour
             animator.SetTrigger("Jump");
             Debug.Log("Player jumped!");
         }
-
-
+        // Allow movement while in the air
         playerMovement();
 
-        /*// Check for jump input, only jump if player is on the ground
-        if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
-        {
-            // prevent another jump in the air
-            isGrounded = false;
-            // Apply instant upward force
-            rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
-           
-            
-        }*/
     }
 
     // Called when this collider/rigidbody has begun touching another
@@ -285,12 +272,7 @@ public class PlayerController : MonoBehaviour
     // Method for attacking
     void TickAttack()
     {
-        // Continue attacking after left click is pressed (Left it this way for spamming)
-        /*if (Mouse.current == null || !Mouse.current.leftButton.wasPressedThisFrame) {
-
-            return;
-        }*/
-
+        // Deal damage once when the state begins
         if (timer == 0f)
         {
             // stop if attack point is missing

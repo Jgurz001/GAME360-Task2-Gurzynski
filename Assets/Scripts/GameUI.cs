@@ -30,17 +30,18 @@ public class GameUI : MonoBehaviour
 
 
     [Header("Pause Settings")]
+    // Pause menu
     [SerializeField] private GameObject PauseMenu;
 
    
-
+    // Listen for scare and game state changes
     private void OnEnable()
     {
         GameManager.OnScoreChanged += CheckWinCondition;
         GameManager.OnGameStateChanged += HandleGameStateChanged;
     }
 
-    // Stop listening for the score change
+    // Stop listening for the score change and game state
     private void OnDisable()
     {
         GameManager.OnScoreChanged -= CheckWinCondition;
@@ -84,12 +85,13 @@ public class GameUI : MonoBehaviour
     }
 
 
-    //Observer method
+    // Updates the UI when GameManager changes state
     private void HandleGameStateChanged(GameState newState)
     {
         switch (newState) 
         {
             case GameState.Playing:
+                // Hides all menus
                 PauseMenu.SetActive(false);
                 GameOverPanel.SetActive(false);
                 WinPanel.SetActive(false);
@@ -101,6 +103,7 @@ public class GameUI : MonoBehaviour
                 break;
 
             case GameState.Paused:
+                //Display pause menu
                 PauseMenu.SetActive(true);
 
                 //release and display the mouse for the UI interaction
@@ -142,12 +145,10 @@ public class GameUI : MonoBehaviour
                 break;
         }
     }
-
-
-
-
+    //Changes game state to lost
     public void postGameOver()
     {
+        // Prevent the game from ending twice
         if (isGameOver)
         {
             return;
@@ -158,9 +159,7 @@ public class GameUI : MonoBehaviour
 
     public void CheckWinCondition(int currentScore)
     {
-        Debug.Log(
-    $"Win check: Score={currentScore}, Started={gameStarted}, Ended={isGameOver}"
-);
+        Debug.Log($"Win check: Score={currentScore}, Started={gameStarted}, Ended={isGameOver}");
 
         // Only check the victory during the active gameplay
         if (!gameStarted || isGameOver) 
@@ -176,9 +175,10 @@ public class GameUI : MonoBehaviour
         }
 
     }
-
+    // Changes game state to won
     public void winScreen()
     {
+        // Prevent the game from ending twice
         if (isGameOver)
         {
             return;
@@ -187,7 +187,7 @@ public class GameUI : MonoBehaviour
         GameManager.Instance.gameEnd(GameState.Won);
 
     }
-
+    // Displays menu before gameplay begins
     public void mainMenu() 
     {
         // Stop the gameplay
@@ -206,7 +206,7 @@ public class GameUI : MonoBehaviour
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
     }
-    
+    // Resets the score and reloads the level
     public void resetGame()
     {
         // Return game to normal speed
@@ -225,7 +225,7 @@ public class GameUI : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
 
     }
-
+    // Starts gameplay from main menu
     public void startGame()
     {
         Debug.Log("START GAME CALLED");
@@ -243,7 +243,7 @@ public class GameUI : MonoBehaviour
 
         GameManager.Instance.gameStart();
     }
-
+    // Resumes Gameplay from pause menu
     public void resumeGame()
     {
         if (GameManager.Instance != null)
@@ -257,7 +257,4 @@ public class GameUI : MonoBehaviour
         Application.Quit();
     
     }
-
-
-
 }

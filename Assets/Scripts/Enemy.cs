@@ -39,6 +39,11 @@ public class Enemy : MonoBehaviour
     //Reference to the Animator Component
     private Animator animator;
 
+    // Time allowed for deathanimation to play
+    [SerializeField] private float deathAnimationTime = 3f;
+    // Bool set for dead so enemy does not continue reacting
+    private bool isDead = false;
+
     private void Awake()
     {
         //Get the Rgidbody attached to the enemy
@@ -83,6 +88,12 @@ public class Enemy : MonoBehaviour
     // FixedUpdate used for rigidbody physics
     void FixedUpdate()
     {
+        // Stop updating enemy movement after death (This will be spread across the methods)
+        if (isDead)
+        {
+            return;
+        }
+
         ChasePlayer();
     }
 
@@ -152,6 +163,12 @@ public class Enemy : MonoBehaviour
 
     public void TakeDamage(float damageAmount)
     {
+        //Ignore damage after enemy is dead
+        if (isDead)
+        {
+            return;
+        }
+
         // Removes health from the enemy
         health -= damageAmount;
 
@@ -162,6 +179,7 @@ public class Enemy : MonoBehaviour
         if (health <= 0)
         {
             Die();
+            return;
         }
 
         // Play Reaction only when the enemy survives
@@ -172,16 +190,29 @@ public class Enemy : MonoBehaviour
     }
 
     void Attack(PlayerController playerHealth)
-    {
+    { 
+        //Play the enemy attack animation
+        if (animator != null)
+        {
+            animator.SetTrigger("Attack");
+        }
         //Damage player
         playerHealth.TakeDamage(attackDamage);
 
         Debug.Log($"Enemy attacked player for  {attackDamage} damage!");
 
+       
+
     }
 
     private void OnCollisionStay(Collision collision)
     {
+
+        if (isDead)
+        {
+            return;
+        }
+
         // Stop if the attack is cooling down
         if (Time.time < attackTime) 
         {
@@ -201,11 +232,37 @@ public class Enemy : MonoBehaviour
         }
     }
 
-  
+  // Completely rewrote for the animation and such
     private void Die() 
     {
+        // Check so we can rpevent the method running twice
+        if (isDead)
+        {
+            return;
+        }
+        // Set enemy to dead
+        isDead = true;
 
-        Destroy(gameObject);
+        // Stop the enemy
+        rb.linearVelocity = Vector3.zero;
+        rb.isKinematic = true;
+
+        // Play the death animation
+        if (animator != null)
+        {
+            animator.SetBool("isRunning", false);
+            animator.ResetTrigger("Reaction");
+            animator.SetTrigger("Dead");
+        }
+
+        // Prevent the dead enemy from attacking or blocking the player
+        foreach (Collider enemyCollider in GetComponentsInChildren<Collider>())
+        {
+            enemyCollider.enabled = false;
+        }
+
+        // Wait before removing the enemy
+        Destroy(gameObject, deathAnimationTime);
     }
 
     // Shows the range of the player/enemy in the scene, good for adjusting
