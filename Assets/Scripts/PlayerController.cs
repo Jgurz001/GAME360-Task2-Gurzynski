@@ -6,7 +6,9 @@ using UnityEngine.InputSystem;
 public class PlayerController : MonoBehaviour
 {
     // Current State Machine
-    public enum PlayerState { Run, Jump, Attack, Hurt, Dead }
+    public enum PlayerState { Run, Jump, Attack, Hurt, Dead, Freeze }
+
+    public bool freeze;
 
     public PlayerState State { get; private set; } = PlayerState.Run;
     private float timer;            // how long we've been in this state
@@ -98,9 +100,7 @@ public class PlayerController : MonoBehaviour
     // Called once per frame
     void Update()
     {
-        /*HandleMovement();
-        HandleJumping();
-        Attack();*/
+       
 
         if (Time.timeScale == 0f) 
         {
@@ -117,6 +117,7 @@ public class PlayerController : MonoBehaviour
             case PlayerState.Jump: TickJump(); break;
             case PlayerState.Attack: TickAttack(); break;
             case PlayerState.Dead: TickDead(); break;
+            case PlayerState.Freeze: TickFreeze(); break;
         }
 
     }
@@ -132,10 +133,6 @@ public class PlayerController : MonoBehaviour
         State = next;
         timer = 0f;
 
-
-        /*// clean up the old look
-        look.material.color = normalColor;
-        transform.localScale = baseScale;*/
     }
 
     // This will become TickRun()
@@ -163,10 +160,8 @@ public class PlayerController : MonoBehaviour
 
         playerMovement();
 
-        
-
-
     }
+
     private void playerMovement() 
     {
         // Get input from keyboard
@@ -234,19 +229,19 @@ public class PlayerController : MonoBehaviour
             Debug.Log("Player jumped!");
         }
 
-
         playerMovement();
 
-        /*// Check for jump input, only jump if player is on the ground
-        if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
+ 
+    }
+
+
+    private void TickFreeze() 
+    {
+        if (freeze) 
         {
-            // prevent another jump in the air
-            isGrounded = false;
-            // Apply instant upward force
-            rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
-           
-            
-        }*/
+            moveSpeed = 0;
+            rb.angularVelocity = Vector3.zero;
+        }
     }
 
     // Called when this collider/rigidbody has begun touching another
