@@ -2,8 +2,19 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 
+
 public class PlayerController : MonoBehaviour
 {
+    // Current State Machine
+    public enum PlayerState { Run, Jump, Attack, Hurt, Dead, Freeze }
+
+    public bool freeze;
+
+    public PlayerState State { get; private set; } = PlayerState.Run;
+    private float timer;            // how long we've been in this state
+    [SerializeField] private float attackTime = 0.15f;
+    [SerializeField] private float hurtTime = 0.5f;
+
     [Header("Movement Settings")]
     // player speed
     public float moveSpeed = 3f;
@@ -89,24 +100,79 @@ public class PlayerController : MonoBehaviour
     // Called once per frame
     void Update()
     {
-        HandleMovement();
-        HandleJumping();
-        Attack();
+       
+
+        if (Time.timeScale == 0f) 
+        {
+            return;
+        }
+
+        timer += Time.deltaTime;
+
+
+        switch (State) 
+        {
+            case PlayerState.Run: TickRun(); break;
+            case PlayerState.Hurt: TickHurt(); break;
+            case PlayerState.Jump: TickJump(); break;
+            case PlayerState.Attack: TickAttack(); break;
+            case PlayerState.Dead: TickDead(); break;
+            case PlayerState.Freeze: TickFreeze(); break;
+        }
+
     }
 
+ 
 
+    private void SwitchTo(PlayerState next)
+    {
+        if (State == next) return;
 
-    void HandleMovement()
+        Debug.Log(name + ":" + State + " -> " + next);
+
+        State = next;
+        timer = 0f;
+
+    }
+
+    // This will become TickRun()
+    private void TickRun()
+    {
+
+        //Enter the Jump state when space bar is pressed
+        if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
+        {
+            SwitchTo(PlayerState.Jump);
+            TickJump();
+            return;
+
+        }
+
+        //Enter the attack state when left mouse is clicked
+        if (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame)
+        {
+
+            SwitchTo(PlayerState.Attack);
+            TickAttack();
+            return;
+
+        }
+
+        playerMovement();
+
+    }
+
+    private void playerMovement() 
     {
         // Get input from keyboard
         float horizontal = Input.GetAxisRaw("Horizontal"); // A/D or Left/Right arrows
         float vertical = Input.GetAxisRaw("Vertical");     // W/S or Up/Down arrows
 
         // IF the camera is not found
-        if (cameraTransform == null) 
+        if (cameraTransform == null)
         {
             Debug.Log("Camera NOT found.");
-            return;   
+            return;
         }
         //Get the camera's forward and right directions
         Vector3 cameraForward = cameraTransform.forward;
@@ -129,7 +195,7 @@ public class PlayerController : MonoBehaviour
         // Update the running animatiopn
         animator.SetBool("isRunning", isMoving);
 
-        if (isMoving) 
+        if (isMoving)
         {
 
             // Find the rotation that faces the movement direction
@@ -137,7 +203,7 @@ public class PlayerController : MonoBehaviour
 
             //Gradually rotate the player towards the target
             transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
-          
+
         }
 
         // Keep the Rigidbody's current vertical speed for jump
@@ -145,21 +211,36 @@ public class PlayerController : MonoBehaviour
         //Apply camera-relative horizontal movement
         rb.linearVelocity = new Vector3(moveDirection.x * moveSpeed, velocity.y, moveDirection.z * moveSpeed);
 
-
     }
 
-    void HandleJumping()
+
+    // This will be TickJump
+    private void TickJump()
     {
-        // Check for jump input, only jump if player is on the ground
-        if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
+
+        //Return to normal controls after landing
+        if (timer == 0f)
         {
-            // prevent another jump in the air
             isGrounded = false;
-            // Apply instant upward force
             rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+            
             //Play jump animation
             animator.SetTrigger("Jump");
             Debug.Log("Player jumped!");
+        }
+
+        playerMovement();
+
+ 
+    }
+
+
+    private void TickFreeze() 
+    {
+        if (freeze) 
+        {
+            moveSpeed = 0;
+            rb.angularVelocity = Vector3.zero;
         }
     }
 
@@ -173,6 +254,11 @@ public class PlayerController : MonoBehaviour
             isGrounded = true;
 
             Debug.Log("Player landed on ground");
+
+            if (State == PlayerState.Jump)
+            {
+                SwitchTo(PlayerState.Run);
+            }
         }
     }
 
@@ -188,37 +274,52 @@ public class PlayerController : MonoBehaviour
     }
 
     // Method for attacking
-    void Attack()
+    void TickAttack()
     {
-         // Continue attacking after left click is pressed (Left it this way for spamming)
-        if (Mouse.current == null || !Mouse.current.leftButton.wasPressedThisFrame) {
-            
+        // Continue attacking after left click is pressed (Left it this way for spamming)
+        /*if (Mouse.current == null || !Mouse.current.leftButton.wasPressedThisFrame) {
+
             return;
-        }
-        
-       
-        // stop if attack point is missing
-        if (attackPoint == null) {
-            // For debugging
-            Debug.Log("Attack Point not assigned");
-            return;
-        }
+        }*/
 
-        // This will find enemy colliders inside of the attack sphere
-        Collider[] hitEnemies = Physics.OverlapSphere(attackPoint.position, attackRange, enemyLayers, QueryTriggerInteraction.Collide);
-        // Check every single collider that was found
-        foreach (Collider enemyCollider in hitEnemies) {
-
-            // Call on the enemy script and get the Enemy health
-            Enemy enemyHealth = enemyCollider.GetComponent<Enemy>();
-
-            if (enemyHealth != null) {
-                Debug.Log("Attack pressed");
-                // Damage the enemy
-                enemyHealth.TakeDamage(attackDamage);
+        if (timer == 0f)
+        {
+            // stop if attack point is missing
+            if (attackPoint == null)
+            {
+                // For debugging
+                Debug.Log("Attack Point not assigned");
+                return;
             }
 
+            // This will find enemy colliders inside of the attack sphere
+            Collider[] hitEnemies = Physics.OverlapSphere(attackPoint.position, attackRange, enemyLayers, QueryTriggerInteraction.Collide);
+            // Check every single collider that was found
+            foreach (Collider enemyCollider in hitEnemies)
+            {
+
+                // Call on the enemy script and get the Enemy health
+                Enemy enemyHealth = enemyCollider.GetComponent<Enemy>();
+
+                if (enemyHealth != null)
+                {
+                    Debug.Log("Attack pressed");
+                    // Damage the enemy
+                    enemyHealth.TakeDamage(attackDamage);
+                }
+
+            }
         }
+
+        playerMovement();
+
+        //Return to normal controls after the attack timer has ended
+        if (timer >= attackTime)
+        {
+            SwitchTo(PlayerState.Run);
+        
+        }
+        
 
 
     }
@@ -234,21 +335,46 @@ public class PlayerController : MonoBehaviour
     }
 
     //Method for player/enemy taking damage
-    public void TakeDamage(float damageAmount) {
-
+    public void TakeDamage(float damageAmount) 
+    {
+       // Prevent repeated damage during hurt or dead states
+        if (State == PlayerState.Hurt || State == PlayerState.Dead)
+        {
+            return;
+        
+        }
         // Take player damage
         health -= damageAmount;
         //Update the healthbar
         healthBar.UpdateHealthBar(health, maxHealth);
         //Kill player/ end game at zero
-        if (health <= 0) 
+        if (health <= 0f)
         {
-            Die();        
+            SwitchTo(PlayerState.Dead);
         }
+        else
+        {
+            SwitchTo(PlayerState.Hurt);
+
+        }
+
+
+ 
 
     }
 
-    private void Die()
+    private void TickHurt()
+    {
+
+        // Return to normal after the Hurt Timer
+        if (timer >= hurtTime)
+        {
+            SwitchTo(PlayerState.Run);
+
+        }
+    }
+
+    private void TickDead()
     {
         // Display gameover screen
         if (gameUI != null)
