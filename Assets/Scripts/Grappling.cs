@@ -15,6 +15,7 @@ public class Grappling : MonoBehaviour
     [Header("Grappling")]
     public float maxGrappleDistance;
     public float grappleDelayTime;
+    public float overshootYAxis;
 
     private Vector3 grapplePoint;
 
@@ -42,7 +43,7 @@ public class Grappling : MonoBehaviour
         if (grapplingCdTimer > 0) return;
         grappling = true;
 
-        pm.freeze = true;
+        
 
         RaycastHit hit;
         if (Physics.Raycast(cam.position, cam.forward, out hit, maxGrappleDistance, whatIsGrappleable))
@@ -63,14 +64,29 @@ public class Grappling : MonoBehaviour
 
     }
 
+    // Just pick up here tomorrow. Started building the grapple. Not sure what all of this is tbh. 
+    // Still confused why the grapple does NOT disappear
+    //  Watch video starting at 6:30
     private void ExecuteGrapple()
     {
-        pm.freeze = true;
+       
+
+        Vector3 lowestPoint = new Vector3(transform.position.x, transform.position.y - 1f, transform.position.z);
+
+        float grapplePointRelativeYPos = grapplePoint.y - lowestPoint.y;
+        float highestPointOnArc = grapplePointRelativeYPos + overshootYAxis;
+
+        if (grapplePointRelativeYPos < 0) highestPointOnArc = overshootYAxis;
+
+        pm.JumpToPosition(grapplePoint, highestPointOnArc);
+
+        Invoke(nameof(StopGrappling), 1f);
     }
 
-    private void StopGrappling()
+    public void StopGrappling()
     {
-        pm.freeze = false;
+        
+        pm.activeGrapple = false;
 
         grappling = false;
 

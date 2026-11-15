@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -6,9 +7,11 @@ using UnityEngine.InputSystem;
 public class PlayerController : MonoBehaviour
 {
     // Current State Machine
-    public enum PlayerState { Run, Jump, Attack, Hurt, Dead, Freeze }
+    public enum PlayerState { Run, Jump, Attack, Hurt, Dead }
 
-    public bool freeze;
+ 
+
+    public bool activeGrapple;
 
     public PlayerState State { get; private set; } = PlayerState.Run;
     private float timer;            // how long we've been in this state
@@ -24,6 +27,9 @@ public class PlayerController : MonoBehaviour
     private Vector3 moveDirection;
     // Camera used to calculate movement
     [SerializeField] private Transform cameraTransform;
+
+    // Had to make this so the grapple worked going down instead of just up
+    [SerializeField] private float downwardGrapple = 15f;
 
     //For rotating the character while moving
     public float rotationSpeed = 1440f;
@@ -117,7 +123,7 @@ public class PlayerController : MonoBehaviour
             case PlayerState.Jump: TickJump(); break;
             case PlayerState.Attack: TickAttack(); break;
             case PlayerState.Dead: TickDead(); break;
-            case PlayerState.Freeze: TickFreeze(); break;
+           
         }
 
     }
@@ -164,6 +170,8 @@ public class PlayerController : MonoBehaviour
 
     private void playerMovement() 
     {
+        if (activeGrapple) return; 
+
         // Get input from keyboard
         float horizontal = Input.GetAxisRaw("Horizontal"); // A/D or Left/Right arrows
         float vertical = Input.GetAxisRaw("Vertical");     // W/S or Up/Down arrows
@@ -235,14 +243,6 @@ public class PlayerController : MonoBehaviour
     }
 
 
-    private void TickFreeze() 
-    {
-        if (freeze) 
-        {
-            moveSpeed = 0;
-            rb.angularVelocity = Vector3.zero;
-        }
-    }
 
     // Called when this collider/rigidbody has begun touching another
     void OnCollisionEnter(Collision collision)
@@ -252,8 +252,22 @@ public class PlayerController : MonoBehaviour
         {
 
             isGrounded = true;
-
             Debug.Log("Player landed on ground");
+
+
+            if (activeGrapple)
+            {
+                ResetRestrictions();
+                Grappling grapple = GetComponent<Grappling>();
+
+                if (grapple != null)
+                {
+                    grapple.StopGrappling();
+                }
+            }
+
+
+       
 
             if (State == PlayerState.Jump)
             {
@@ -383,4 +397,54 @@ public class PlayerController : MonoBehaviour
             gameUI.postGameOver();
         }   
     }
+
+    
+    private Vector3 velocityToSet;
+
+    private void SetVelocity() 
+    {
+       
+        rb.linearVelocity = velocityToSet;
+
+    }
+
+    public void ResetRestrictions() 
+    {
+        activeGrapple = false;
+    }
+   
+    public void JumpToPosition(Vector3 targetPosition, float trajectoryHeight)
+    {
+
+        activeGrapple = true;
+
+        Vector3 directionToTarget = targetPosition - transform.position;
+
+        if (directionToTarget.y < 0f)
+        {
+            velocityToSet = directionToTarget.normalized * downwardGrapple;
+        }
+        else 
+        {
+            velocityToSet = CalculateJumpVelocity(transform.position, targetPosition, trajectoryHeight);
+        }
+
+           
+
+        Invoke(nameof(SetVelocity), 0.1f);
+        
+    }
+
+    public Vector3 CalculateJumpVelocity(Vector3 startPoint, Vector3 endPoint, float trajectoryHeight)
+    {
+        float gravity = Physics.gravity.y;
+        float displacementY = endPoint.y - startPoint.y;
+        Vector3 displacementXZ = new Vector3(endPoint.x - startPoint.x, 0f, endPoint.z - startPoint.z);
+
+        Vector3 velocityY = Vector3.up * Mathf.Sqrt(-2 * gravity * trajectoryHeight);
+        Vector3 velocityXZ = displacementXZ / (Mathf.Sqrt(-2 * trajectoryHeight / gravity) + Mathf.Sqrt(2 * (displacementY - trajectoryHeight) / gravity));
+
+        return velocityXZ + velocityY;
+    }
+
 }
