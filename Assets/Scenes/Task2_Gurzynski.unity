@@ -3690,7 +3690,7 @@ Transform:
   m_GameObject: {fileID: 700686771}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.4, y: -0.3, z: 0.8}
+  m_LocalPosition: {x: 0.8, y: -0.3, z: 0.8}
   m_LocalScale: {x: 0.09984415, y: 0.0915, z: 0.24168375}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -12512,13 +12512,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 05d288f85bed9ec468f25a8da7501525, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  freeze: 0
   activeGrapple: 0
   attackTime: 0.4
   hurtTime: 0.5
   moveSpeed: 5
   jumpForce: 7
   cameraTransform: {fileID: 0}
+  downwardGrapple: 15
   rotationSpeed: 720
   attackDamage: 25
   attackRange: 1.5
@@ -12605,7 +12605,7 @@ MonoBehaviour:
   lr: {fileID: 700686773}
   maxGrappleDistance: 100
   grappleDelayTime: 0
-  overshootYAxis: 3
+  overshootYAxis: 5
   grapplingCd: 0
   grapplingKey: 324
 --- !u!1 &1967443554

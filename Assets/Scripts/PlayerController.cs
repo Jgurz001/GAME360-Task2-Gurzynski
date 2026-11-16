@@ -257,7 +257,7 @@ public class PlayerController : MonoBehaviour
 
             if (activeGrapple)
             {
-                ResetRestrictions();
+                //ResetRestrictions();
                 Grappling grapple = GetComponent<Grappling>();
 
                 if (grapple != null)
@@ -265,10 +265,6 @@ public class PlayerController : MonoBehaviour
                     grapple.StopGrappling();
                 }
             }
-
-
-       
-
             if (State == PlayerState.Jump)
             {
                 SwitchTo(PlayerState.Run);
@@ -334,8 +330,6 @@ public class PlayerController : MonoBehaviour
         
         }
         
-
-
     }
     // Shows the range of the player/enemy in the scene, good for adjusting
     private void OnDrawGizmosSelected()
@@ -370,11 +364,7 @@ public class PlayerController : MonoBehaviour
         {
             SwitchTo(PlayerState.Hurt);
 
-        }
-
-
- 
-
+        } 
     }
 
     private void TickHurt()
