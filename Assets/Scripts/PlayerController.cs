@@ -12,6 +12,7 @@ public class PlayerController : MonoBehaviour
  
 
     public bool activeGrapple;
+    public bool swinging;
 
     public PlayerState State { get; private set; } = PlayerState.Run;
     private float timer;            // how long we've been in this state
@@ -27,6 +28,7 @@ public class PlayerController : MonoBehaviour
     private Vector3 moveDirection;
     // Camera used to calculate movement
     [SerializeField] private Transform cameraTransform;
+    public float swingSpeed;
 
     // Had to make this so the grapple worked going down instead of just up
     [SerializeField] private float downwardGrapple = 15f;
@@ -170,7 +172,8 @@ public class PlayerController : MonoBehaviour
 
     private void playerMovement() 
     {
-        if (activeGrapple) return; 
+        if (activeGrapple) return;
+        if (swinging) return;
 
         // Get input from keyboard
         float horizontal = Input.GetAxisRaw("Horizontal"); // A/D or Left/Right arrows
