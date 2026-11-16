@@ -13046,7 +13046,7 @@ MonoBehaviour:
   lr: {fileID: 700686773}
   maxGrappleDistance: 100
   grappleDelayTime: 0
-  overshootYAxis: 5
+  overshootYAxis: 100
   grapplingCd: 0
   grapplingKey: 324
 --- !u!114 &1961852794
@@ -13062,6 +13062,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   swingKey: 323
+  lr: {fileID: 700686773}
   gunTip: {fileID: 1959806635}
   cam: {fileID: 1153929086}
   player: {fileID: 1961852788}

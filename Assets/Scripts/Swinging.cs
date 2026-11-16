@@ -6,7 +6,7 @@ public class Swinging : MonoBehaviour
     public KeyCode swingKey = KeyCode.Mouse0;
 
     [Header("References")]
-    //public LineRenderer lr;
+    public LineRenderer lr;
     public Transform gunTip, cam, player;
     public LayerMask whatIsGrappleable;
     private PlayerController pm;
@@ -65,8 +65,8 @@ public class Swinging : MonoBehaviour
 
         currentGrapplePosition = Vector3.Lerp(currentGrapplePosition, swingPoint, Time.deltaTime * 8f);
 
-        //lr.SetPosition(0, gunTip.position);
-       // lr.SetPosition(1, currentGrapplePosition);
+        lr.SetPosition(0, gunTip.position);
+        lr.SetPosition(1, currentGrapplePosition);
     }
 
     private void LateUpdate()
