@@ -8,13 +8,13 @@ public class ScoreUI : MonoBehaviour
     // Listen for the score changes
     private void OnEnable()
     {
-        ScoreManager.OnScoreChanged += UpdateScore;
+        GameManager.OnScoreChanged += UpdateScore;
         
     }
     //Stop listening for the score changes
     private void OnDisable()
     {
-        ScoreManager.OnScoreChanged -= UpdateScore;
+        GameManager.OnScoreChanged -= UpdateScore;
     }
    
     void Start()
